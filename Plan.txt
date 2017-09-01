@@ -1,0 +1,78 @@
+Aaron Paskin Breakout Game Plan
+
+1. Interesting Breakout Variant: I thought that the asteroids level 
+	of PowBall was interesting because it incorporates obstacles for
+	the paddle to avoid, an element that I had not previously seen in
+	a Breakout game.
+	
+2. Levels: ('-': default block, '2': 2-hit block, 'r'/'b'/'g'/'y': red/blue/green/yellow
+	colored pair blocks, 't': traveling block, '.': ball, '===': paddle,
+	'|': wall)
+	Level 1:
+		|---------------|
+		|- - - - - - - -|
+		| - - - - - - - |
+		|- - - - - - - -|
+		|               |
+		| 		.	    |
+		| 	 ===        |
+	
+	Level 2:
+		|y - - 2 2 - - y|
+		|- b - 2 2 - b -|
+		|- g - 2 2 - g -|
+		|- - r 2 2 r - -|
+		|               |
+		| 		.	    |
+		| 	 ===        |
+		
+	Level 3:
+		|ttttttttttttttt|
+		|b-2-2-2-2-2-2-b|
+		|g2-2-2-2-2-2-2g|
+		|r-2-2-2-2-2-2-r|
+		|               |
+		| 		.	    |
+		| 	 ===        |
+		
+	Level 4:
+		|ttttttttttttttt|
+		|ttttttttttttttt|
+		|ttttttttttttttt|
+		|---------------|
+		|               |
+		| 		.	    |
+		| 	 ===        |
+	
+		
+	Levels 4-6: Repeat designs of Levels 1-3 in order, replacing all
+		default blocks with 2-hit blocks.
+
+3. Block Types:
+	2-Hit Blocks: blocks that require two collisions to be destroyed
+	Traveling Blocks: blocks that move to an open location after first
+		collision (and are destroyed after the second); if there are no
+		open locations, block is not affected
+	Colored Pairs: two blocks on the screen share a color; when one is
+		hit, that block turns into the default block and the other block
+		that shared its original color is destroyed
+
+4. Power-Ups: *all power-ups last for thirty seconds
+	Long Paddle: paddle length increases
+	Lazer Paddle: shoots lazers when key is pressed, lazers collisions
+		have the same effect as ball collisions
+	Sticky Paddle: ball is caught when it lands on paddle; ball is
+		released when key is pressed
+
+5. Cheat Keys:
+	1-6: jump to corresponding level
+	R: reset level
+	L: add a life
+	P: pause
+	
+6. I plan to add a reward system that rewards a player with power-ups
+	when they gain certain achievements such as destroying ten blocks
+	between two paddle rebounds, not losing a life in a level, etc. This
+	system adds more depth to the gameplay beyond just completing the
+	levels.
+	
