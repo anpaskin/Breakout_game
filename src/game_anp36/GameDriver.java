@@ -18,7 +18,7 @@ public class GameDriver {
 	private double secondDelay;
 	private String gameTitle;
 	private Circle ball = new Circle();
-	private int ballXSpeed = 0;
+	private int ballXSpeed = 15;
 	private int ballYSpeed = 50;
 	Rectangle paddle = new Rectangle(65, 10, Color.DEEPPINK);
 	private Group root;
@@ -47,7 +47,6 @@ public class GameDriver {
 				ball.getCenterX() < paddle.getX() + paddle.getWidth() &&
 				ball.getCenterX() > paddle.getX()) {
 			ballYSpeed *= -1;
-			ballXSpeed *= -1;
 		}
 	}
 	
