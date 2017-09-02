@@ -39,23 +39,60 @@ public class GameDriver {
 	public Scene setLevel(int levelNum, double width, double height) {
 		Group root = new Group();
 		Scene level = new Scene(root, width, height);
-		Rectangle paddle = new Rectangle(50, 10, Color.RED);
+		Rectangle paddle = new Rectangle(65, 10, Color.DEEPPINK);
 		paddle.setX(175);
 		paddle.setY(350);
 		root.getChildren().add(paddle);
 		if(levelNum == 1) {
 			setLevelOne(root);
 		}
+		if(levelNum == 2) {
+			setLevelTwo(root);
+		}
+		if(levelNum == 3) {
+			setLevelThree(root);
+		}
+		if(levelNum == 4) {
+			setLevelFour(root);
+		}
 		return level;
 	}
 	
 	public void setLevelOne(Group root) {
-		int blockCoordinate = 0;
-		for(int x = 0; x < 8; x++) {
-			Rectangle block = new Rectangle(50, 30, Color.BLACK);
-			block.setX(blockCoordinate);
+		setBlockRow(root, 0, 0, 9, 0);
+		setBlockRow(root, 0, 30, 5, 50);
+		setBlockRow(root, 50, 60, 4, 50);
+		setBlockRow(root, 0, 90, 5, 50);
+		setBlockRow(root, 50, 120, 4, 50);
+	}
+	
+	public void setLevelTwo(Group root) {
+		for(int x = 0; x < 5; x++) {
+			setBlockRow(root, 0, x*30, 5, 50);
+		}
+	}
+	
+	public void setLevelThree(Group root) {
+		for(int x = 0; x < 5; x++) {
+			setBlockRow(root, 0, x*30, 9, 0);
+		}
+	}
+	
+	public void setLevelFour(Group root) {
+		for(int x = 0; x < 5; x++) {
+			setBlockRow(root, 0, x*30, 9, 0);
+		}
+	}
+	
+	private void setBlockRow(Group root, int blockXCoordinate, int blockYCoordinate, int blockNum, int gap) {
+		for(int x = 0; x < blockNum; x++) {
+			Rectangle block = new Rectangle(50, 30, Color.GRAY);
+			block.setX(blockXCoordinate);
+			block.setY(blockYCoordinate);
+			block.setStrokeWidth(5);
+			block.setStroke(Color.BLACK);
 			root.getChildren().add(block);
-			blockCoordinate += 50;
+			blockXCoordinate += gap+50;
 		}
 	}
 	
