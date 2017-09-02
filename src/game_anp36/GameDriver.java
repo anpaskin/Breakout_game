@@ -36,12 +36,27 @@ public class GameDriver {
 		
 	}
 	
-	public Scene setLevel(double width, double height) {
+	public Scene setLevel(int levelNum, double width, double height) {
 		Group root = new Group();
 		Scene level = new Scene(root, width, height);
 		Rectangle paddle = new Rectangle(50, 10, Color.RED);
+		paddle.setX(175);
+		paddle.setY(350);
 		root.getChildren().add(paddle);
+		if(levelNum == 1) {
+			setLevelOne(root);
+		}
 		return level;
+	}
+	
+	public void setLevelOne(Group root) {
+		int blockCoordinate = 0;
+		for(int x = 0; x < 8; x++) {
+			Rectangle block = new Rectangle(50, 30, Color.BLACK);
+			block.setX(blockCoordinate);
+			root.getChildren().add(block);
+			blockCoordinate += 50;
+		}
 	}
 	
 	
