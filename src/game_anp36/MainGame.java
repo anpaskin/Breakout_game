@@ -16,10 +16,11 @@ public class MainGame extends Application {
 	@Override
 	public void start(Stage mainStage) {
 		GameDriver gameDriver = new GameDriver(60, "Breakout");
-		Scene curScene = gameDriver.setLevel(4, 450, 400);
+		Scene curScene = gameDriver.setLevel(1, 450, 400);
 		mainStage.setScene(curScene);
 		mainStage.setTitle("Test");
 		mainStage.show();
+		gameDriver.startGameLoop();
 	}
 	
 

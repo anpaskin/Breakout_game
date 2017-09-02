@@ -1,19 +1,27 @@
 package game_anp36;
 
+import javax.xml.soap.Node;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
 public class GameDriver {
-
+	
 	private int framesPerSecond;
 	private int millisecondDelay;
 	private double secondDelay;
 	private String gameTitle;
+	private Circle ball = new Circle();
+	private int ballXSpeed = 0;
+	private int ballYSpeed = 50;
+	Rectangle paddle = new Rectangle(65, 10, Color.DEEPPINK);
+	private Group root;
 	
 	public GameDriver(int fps, String title) {
 		framesPerSecond = fps;
@@ -33,16 +41,26 @@ public class GameDriver {
 	}
 	
 	private void step(double elapsedTime) {
-		
+		ball.setCenterX(ball.getCenterX() + ballXSpeed * elapsedTime);
+		ball.setCenterY(ball.getCenterY() + ballYSpeed * elapsedTime);
+		if(ball.getCenterY() > paddle.getY() &&
+				ball.getCenterX() < paddle.getX() + paddle.getWidth() &&
+				ball.getCenterX() > paddle.getX()) {
+			ballYSpeed *= -1;
+			ballXSpeed *= -1;
+		}
 	}
 	
 	public Scene setLevel(int levelNum, double width, double height) {
-		Group root = new Group();
+		root = new Group();
 		Scene level = new Scene(root, width, height);
-		Rectangle paddle = new Rectangle(65, 10, Color.DEEPPINK);
 		paddle.setX(175);
 		paddle.setY(350);
 		root.getChildren().add(paddle);
+		ball.setRadius(4);
+		ball.setCenterX(200);
+		ball.setCenterY(300);
+		root.getChildren().add(ball);
 		if(levelNum == 1) {
 			setLevelOne(root);
 		}
