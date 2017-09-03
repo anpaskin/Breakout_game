@@ -13,6 +13,7 @@ import javafx.util.Duration;
 
 public class GameDriver {
 	
+	private Scene gameSurface;
 	private int framesPerSecond;
 	private int millisecondDelay;
 	private double secondDelay;
@@ -22,12 +23,14 @@ public class GameDriver {
 	private int ballYSpeed = 50;
 	Rectangle paddle = new Rectangle(65, 10, Color.DEEPPINK);
 	private Group root;
+	private BlockManager blockManager;
 	
 	public GameDriver(int fps, String title) {
 		framesPerSecond = fps;
 		millisecondDelay = 1000 / fps;
 		secondDelay = 1.0 / fps;
 		gameTitle = title;
+		blockManager = new BlockManager(ball);
 	}
 	
 	protected final void startGameLoop() {
@@ -41,6 +44,18 @@ public class GameDriver {
 	}
 	
 	private void step(double elapsedTime) {
+		paddleBounce(elapsedTime);
+		blockManager.addCollisions();
+		System.out.println("Root Size: " + root.getChildren().size());
+		System.out.println("Step Clean Up: " + blockManager.cleanUp());
+		for(Block x : blockManager.cleanUp()) {
+			System.out.println("Contains block: " + root.getChildren().contains(x));
+			root.getChildren().remove(x);
+		}
+		System.out.println("Root Size: " + root.getChildren().size());
+	}
+	
+	private void paddleBounce(double elapsedTime) {
 		ball.setCenterX(ball.getCenterX() + ballXSpeed * elapsedTime);
 		ball.setCenterY(ball.getCenterY() + ballYSpeed * elapsedTime);
 		if(ball.getCenterY() > paddle.getY() &&
@@ -72,6 +87,7 @@ public class GameDriver {
 		if(levelNum == 4) {
 			setLevelFour(root);
 		}
+		gameSurface = level;
 		return level;
 	}
 	
@@ -109,6 +125,7 @@ public class GameDriver {
 			block.setStrokeWidth(5);
 			block.setStroke(Color.BLACK);
 			root.getChildren().add(block);
+			blockManager.addBlock(new Block(block));
 			blockXCoordinate += gap+50;
 		}
 	}
