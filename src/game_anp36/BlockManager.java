@@ -27,6 +27,14 @@ public class BlockManager {
 		return BLOCK_LIST;
 	}
 	
+	public List<Block> getCollisions() {
+		return COLLISIONS;
+	}
+	
+	public Set<Block> getCleanUp() {
+		return CLEAN_UP_BLOCKS;
+	}
+	
 	public void addCollisions() {
 		for(Block x : BLOCK_LIST) {
 			if(x.ballCollide(BALL)) {
@@ -36,7 +44,7 @@ public class BlockManager {
 		System.out.println("Collisions: " + COLLISIONS);
 	}
 	
-	public Set<Block> cleanUp() {
+	public void cleanUp() {
 		System.out.println("Number of Blocks: " + BLOCK_LIST.size());
 		CLEAN_UP_BLOCKS.clear();
 		for(Block x : COLLISIONS) {
@@ -44,12 +52,14 @@ public class BlockManager {
 				CLEAN_UP_BLOCKS.add(x);
 			}
 		}
-		
+	}
+	
+	public void removeBlocks() {
 		BLOCK_LIST.removeAll(CLEAN_UP_BLOCKS);
 		COLLISIONS.clear();
 		System.out.println("Clean Up: " + CLEAN_UP_BLOCKS);
 		System.out.println("Number of Blocks: " + BLOCK_LIST.size());
-		return CLEAN_UP_BLOCKS;
+		//return CLEAN_UP_BLOCKS;
 	}
 	
 }
