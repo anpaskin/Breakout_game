@@ -6,6 +6,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
@@ -24,6 +25,7 @@ public class GameDriver {
 	Rectangle paddle = new Rectangle(65, 10, Color.DEEPPINK);
 	private Group root;
 	private BlockManager blockManager;
+	public static final int KEY_INPUT_SPEED = 20;
 	
 	public GameDriver(int fps, String title) {
 		framesPerSecond = fps;
@@ -33,13 +35,13 @@ public class GameDriver {
 	}
 	
 	protected final void startGameLoop() {
-		
 		KeyFrame frame = new KeyFrame(Duration.millis(millisecondDelay),
                 e -> step(secondDelay));
 		Timeline animation = new Timeline();
 		animation.setCycleCount(Timeline.INDEFINITE);
 		animation.getKeyFrames().add(frame);
 		animation.play();
+		gameSurface.setOnKeyPressed(e -> paddleMove(e.getCode()));
 	}
 	
 	private void step(double elapsedTime) {
@@ -78,8 +80,16 @@ public class GameDriver {
 			}
 			else if(block.speedToChange(ball).equals("y")) {
 				ballYSpeed *= -1;
+			} 
+			
+			/*if(block.leftCollision(ball) || block.rightCollision(ball)) {
+				ballXSpeed *= -1;
 			}
-		}
+			if(block.topCollision(ball) || block.bottomCollision(ball)) {
+				ballYSpeed *= -1;
+			} */
+			
+		} 
 	}
 	
 	private void ceilingAndWallBounce() {
@@ -100,7 +110,14 @@ public class GameDriver {
 		}
 	}
 	
-	
+	private void paddleMove(KeyCode code) {
+		if(code == KeyCode.RIGHT) {
+			paddle.setX(paddle.getX() + KEY_INPUT_SPEED);
+		}
+		else if (code == KeyCode.LEFT) {
+            paddle.setX(paddle.getX() - KEY_INPUT_SPEED);
+        }
+	}
 	
 	public Scene setLevel(int levelNum, double width, double height) {
 		root = new Group();

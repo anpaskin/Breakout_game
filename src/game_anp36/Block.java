@@ -42,15 +42,51 @@ public class Block extends Node {
 	}
 	
 	public String speedToChange(Circle ball) {
-		if(ball.getCenterX() + ball.getRadius() == BLOCK.getX() ||
-				ball.getCenterX() - ball.getRadius() == BLOCK.getX() + BLOCK.getWidth()) {
+		if(ball.getCenterX() + ball.getRadius() > BLOCK.getX() ||
+				ball.getCenterX() - ball.getRadius() < BLOCK.getX() + BLOCK.getWidth()) {
 			return "x";
 		} 
-		else if(ball.getCenterY() + ball.getRadius() >= BLOCK.getY() ||
-				ball.getCenterY() - ball.getRadius() <= BLOCK.getY() + BLOCK.getHeight()) {
+		else if(ball.getCenterY() + ball.getRadius() > BLOCK.getY() ||
+				ball.getCenterY() - ball.getRadius() < BLOCK.getY() + BLOCK.getHeight()) {
 			return "y";
 		}
 		else return "No collision";
+	}
+	
+	public boolean leftCollision(Circle ball) {
+		if(ball.getCenterX() + ball.getRadius() == BLOCK.getX() &&
+				(ball.getCenterY() + ball.getRadius() >= BLOCK.getY() &&
+				ball.getCenterY() - ball.getRadius() <= BLOCK.getY() + BLOCK.getHeight())) {
+			return true;
+		}
+		else return false;
+	}
+	
+	public boolean rightCollision(Circle ball) {
+		if(ball.getCenterX() - ball.getRadius() == BLOCK.getX() + BLOCK.getWidth() &&
+				(ball.getCenterY() + ball.getRadius() >= BLOCK.getY() &&
+				ball.getCenterY() - ball.getRadius() <= BLOCK.getY() + BLOCK.getHeight())) {
+			return true;
+		}
+		else return false;
+	}
+	
+	public boolean topCollision(Circle ball) {
+		if(ball.getCenterY() + ball.getRadius() == BLOCK.getY() &&
+				(ball.getCenterX() + ball.getRadius() >= BLOCK.getX() &&
+				ball.getCenterX() - ball.getRadius() <= BLOCK.getX() + BLOCK.getWidth())) {
+			return true;
+		}
+		else return false;
+	}
+	
+	public boolean bottomCollision(Circle ball) {
+		if(ball.getCenterY() - ball.getRadius() == BLOCK.getY() + BLOCK.getHeight() &&
+				(ball.getCenterX() + ball.getRadius() >= BLOCK.getX() &&
+				ball.getCenterX() - ball.getRadius() <= BLOCK.getX() + BLOCK.getWidth())) {
+			return true;
+		}
+		else return false;
 	}
 
 	@Override
