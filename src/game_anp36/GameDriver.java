@@ -87,7 +87,7 @@ public class GameDriver {
 				return;
 			}
 			ballXSpeed *= .95;
-		}
+		} 
 	}
 	
 	private void blockBounce() {
