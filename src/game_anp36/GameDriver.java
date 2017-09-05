@@ -75,19 +75,19 @@ public class GameDriver {
 	
 	private void blockBounce() {
 		for(Block block : blockManager.getCollisions()) {
-			if(block.speedToChange(ball).equals("x")) {
+			if(block.speedToChange(ball).equals("y")) {
+				ballYSpeed *= -1;
+			}  
+			else if(block.speedToChange(ball).equals("x")) {
 				ballXSpeed *= -1;
 			}
-			else if(block.speedToChange(ball).equals("y")) {
-				ballYSpeed *= -1;
-			} 
 			
 			/*if(block.leftCollision(ball) || block.rightCollision(ball)) {
 				ballXSpeed *= -1;
 			}
 			if(block.topCollision(ball) || block.bottomCollision(ball)) {
 				ballYSpeed *= -1;
-			} */
+			}*/
 			
 		} 
 	}
@@ -111,10 +111,10 @@ public class GameDriver {
 	}
 	
 	private void paddleMove(KeyCode code) {
-		if(code == KeyCode.RIGHT) {
+		if(code == KeyCode.RIGHT && paddle.getX() + paddle.getWidth() <= gameSurface.getWidth()) {
 			paddle.setX(paddle.getX() + KEY_INPUT_SPEED);
 		}
-		else if (code == KeyCode.LEFT) {
+		else if (code == KeyCode.LEFT && paddle.getX() >= 0) {
             paddle.setX(paddle.getX() - KEY_INPUT_SPEED);
         }
 	}

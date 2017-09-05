@@ -24,17 +24,15 @@ public class Block extends Node {
 	}
 	
 	public boolean ballCollide(Circle ball) {
-		boolean ret = false;
 		if(ball.getCenterX() + ball.getRadius() >= BLOCK.getX() &&
 				ball.getCenterX() - ball.getRadius() <= BLOCK.getX() + BLOCK.getWidth() &&
 				ball.getCenterY() + ball.getRadius() >= BLOCK.getY() &&
 				ball.getCenterY() - ball.getRadius() <= BLOCK.getY() + BLOCK.getHeight()) {
 			System.out.println("Ball collision");
 			isDestroyed = true;
-			ret = true;
-			return ret;
+			return true;
 		}
-		else return ret;
+		else return false;
 	}
 	
 	public Rectangle getRectangle() {
@@ -42,12 +40,27 @@ public class Block extends Node {
 	}
 	
 	public String speedToChange(Circle ball) {
-		if(ball.getCenterX() + ball.getRadius() > BLOCK.getX() ||
-				ball.getCenterX() - ball.getRadius() < BLOCK.getX() + BLOCK.getWidth()) {
-			return "x";
-		} 
-		else if(ball.getCenterY() + ball.getRadius() > BLOCK.getY() ||
-				ball.getCenterY() - ball.getRadius() < BLOCK.getY() + BLOCK.getHeight()) {
+		double r = ball.getRadius();
+		double cX = ball.getCenterX();
+		double cY = ball.getCenterY();
+		double bX = BLOCK.getX();
+		double bY = BLOCK.getY();
+		double w = BLOCK.getWidth();
+		double h = BLOCK.getHeight();
+		if(
+			((cX + r) - bX < (bY + h) - (cY + r) &&
+			 (cX + r) - bX < (cY - r) - bY) ||
+			((bX + w) - (cX - r) < (bY + h) - (cY + r) &&
+			((bX + w) - (cX - r) < (cY - r) - bY))
+				) {
+				return "x";
+		}
+		else if(
+					((cY - r) - bY < (cX - r) - bX &&
+					 (cY - r) - bY < (bX + w) - (cX + r)) ||
+					((bY + h) - (cY + r) < (cX - r) - bX &&
+					 (bY + h) - (cY + r) < (bX + w) - (cX + r))
+				) {
 			return "y";
 		}
 		else return "No collision";
