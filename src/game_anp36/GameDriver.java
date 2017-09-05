@@ -70,6 +70,12 @@ public class GameDriver {
 				ball.getCenterX() - ball.getRadius() <= paddle.getX() + paddle.getWidth() &&
 				ball.getCenterX() + ball.getRadius() >= paddle.getX()) {
 			ballYSpeed *= -1;
+			if(ball.getCenterX() > (paddle.getX() + (.6*paddle.getWidth()))) {
+				ballXSpeed = Math.abs(ballXSpeed);
+			}
+			else if(ball.getCenterX() < (paddle.getX() + (.4*paddle.getWidth()))) {
+				ballXSpeed = -1*Math.abs(ballXSpeed);
+			}
 		}
 	}
 	
