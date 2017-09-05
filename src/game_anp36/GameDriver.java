@@ -12,6 +12,8 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
+//how do you get it to move smoothly like that, the paddle
+
 public class GameDriver {
 	
 	private Scene gameSurface;
@@ -70,12 +72,21 @@ public class GameDriver {
 				ball.getCenterX() - ball.getRadius() <= paddle.getX() + paddle.getWidth() &&
 				ball.getCenterX() + ball.getRadius() >= paddle.getX()) {
 			ballYSpeed *= -1;
-			if(ball.getCenterX() > (paddle.getX() + (.6*paddle.getWidth()))) {
+			if(ball.getCenterX() > (paddle.getX() + (.75*paddle.getWidth()))) {
+				//if(ball.getCenterX() > (paddle.getX() + (.9*paddle.getWidth()))) {
+					ballXSpeed *= 1.2;
+				//}
 				ballXSpeed = Math.abs(ballXSpeed);
+				return;
 			}
-			else if(ball.getCenterX() < (paddle.getX() + (.4*paddle.getWidth()))) {
+			else if(ball.getCenterX() < (paddle.getX() + (.25*paddle.getWidth()))) {
+				//if(ball.getCenterX() < (paddle.getX() + (.1*paddle.getWidth()))) {
+					ballXSpeed *= 1.2;
+				//}
 				ballXSpeed = -1*Math.abs(ballXSpeed);
+				return;
 			}
+			ballXSpeed *= .95;
 		}
 	}
 	
