@@ -11,6 +11,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
 //how do you get it to move smoothly like that, the paddle
@@ -148,18 +149,38 @@ public class GameDriver {
         }
 	}
 	
-	public Scene setLevel(int levelNum, double width, double height) {
+	public void setLevel(Stage myStage, int levelNum, double width, double height) {
 		root = new Group();
+		setAndDisplayLives();
+		makePaddle();
+		makeBall();
+		blockManager = new BlockManager(ball);
+		chooseLevel(levelNum);
 		Scene level = new Scene(root, width, height);
+		gameSurface = level;
+		myStage.setScene(level);
+		myStage.setTitle("Level " + levelNum);
+		myStage.show();
+	}
+	
+	private void setAndDisplayLives() {
 		lives = 5;
 		lifeCount = new Text(390, 390, "Lives: " + lives);
+		root.getChildren().add(lifeCount);
+	}
+	
+	private void makePaddle() {
 		paddle.setX(175);
 		paddle.setY(350);
-		ball = new Circle(200, 300, 4);
-		blockManager = new BlockManager(ball);
-		root.getChildren().add(lifeCount);
 		root.getChildren().add(paddle);
+	}
+	
+	private void makeBall() {
+		ball = new Circle(200, 300, 4);
 		root.getChildren().add(ball);
+	}
+	
+	private void chooseLevel(int levelNum) {
 		if(levelNum == 1) {
 			setLevelOne(root);
 		}
@@ -172,8 +193,6 @@ public class GameDriver {
 		if(levelNum == 4) {
 			setLevelFour(root);
 		}
-		gameSurface = level;
-		return level;
 	}
 	
 	public void setLevelOne(Group root) {
