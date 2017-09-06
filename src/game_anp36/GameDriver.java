@@ -30,8 +30,8 @@ public class GameDriver {
 	private Text lifeCount;
 	private int ballXSpeed;
 	private int ballYSpeed;
-	private final int DEFAULT_BALLXSPEED = 300;
-	private final int DEFAULT_BALLYSPEED = 175;
+	private final int DEFAULT_BALLXSPEED = 100;
+	private final int DEFAULT_BALLYSPEED = 75;
 	Rectangle paddle = new Rectangle(65, 10, Color.DEEPPINK);
 	private Group root;
 	private BlockManager blockManager;
@@ -59,6 +59,7 @@ public class GameDriver {
 		if(blockManager.getBlockList().size() == 0) {
 			levelNum++;
 			setLevel(gameStage, 450, 400);
+			startGameLoop();
 		}
 		if(ballXSpeed != 0 && ballYSpeed != 0) {
 			ball.setCenterX(ball.getCenterX() + ballXSpeed * elapsedTime);
