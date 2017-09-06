@@ -24,6 +24,7 @@ public class GameDriver {
 	private String gameTitle;
 	private Circle ball;
 	private int lives;
+	private Text lifeCount;
 	private int ballXSpeed = 100;
 	private int ballYSpeed = 75;
 	Rectangle paddle = new Rectangle(65, 10, Color.DEEPPINK);
@@ -49,6 +50,7 @@ public class GameDriver {
 	}
 	
 	private void step(double elapsedTime) {
+		System.out.println("Lives: " + lives);
 		ball.setCenterX(ball.getCenterX() + ballXSpeed * elapsedTime);
 		ball.setCenterY(ball.getCenterY() + ballYSpeed * elapsedTime);
 		paddleBounce();
@@ -125,8 +127,16 @@ public class GameDriver {
 	
 	private void floorBounce() {
 		if(ball.getCenterY() + ball.getRadius() >= gameSurface.getHeight()) {
+			decrementLives();
 			ballYSpeed *= -1;
 		}
+	}
+	
+	private void decrementLives() {
+		root.getChildren().remove(lifeCount);
+		lives--;
+		lifeCount = new Text(390, 390, "Lives: " + lives);
+		root.getChildren().add(lifeCount);
 	}
 	
 	private void paddleMove(KeyCode code) {
@@ -142,7 +152,7 @@ public class GameDriver {
 		root = new Group();
 		Scene level = new Scene(root, width, height);
 		lives = 5;
-		Text lifeCount = new Text(390, 390, "Lives: " + lives);
+		lifeCount = new Text(390, 390, "Lives: " + lives);
 		paddle.setX(175);
 		paddle.setY(350);
 		ball = new Circle(200, 300, 4);
