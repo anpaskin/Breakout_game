@@ -10,6 +10,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 //how do you get it to move smoothly like that, the paddle
@@ -22,6 +23,7 @@ public class GameDriver {
 	private double secondDelay;
 	private String gameTitle;
 	private Circle ball;
+	private int lives;
 	private int ballXSpeed = 100;
 	private int ballYSpeed = 75;
 	Rectangle paddle = new Rectangle(65, 10, Color.DEEPPINK);
@@ -139,10 +141,13 @@ public class GameDriver {
 	public Scene setLevel(int levelNum, double width, double height) {
 		root = new Group();
 		Scene level = new Scene(root, width, height);
+		lives = 5;
+		Text lifeCount = new Text(390, 390, "Lives: " + lives);
 		paddle.setX(175);
 		paddle.setY(350);
 		ball = new Circle(200, 300, 4);
 		blockManager = new BlockManager(ball);
+		root.getChildren().add(lifeCount);
 		root.getChildren().add(paddle);
 		root.getChildren().add(ball);
 		if(levelNum == 1) {
