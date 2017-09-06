@@ -18,16 +18,20 @@ import javafx.util.Duration;
 
 public class GameDriver {
 	
+	private Stage gameStage;
 	private Scene gameSurface;
 	private int framesPerSecond;
 	private int millisecondDelay;
 	private double secondDelay;
 	private String gameTitle;
+	private int levelNum;
 	private Circle ball;
 	private int lives;
 	private Text lifeCount;
-	private int ballXSpeed = 100;
-	private int ballYSpeed = 75;
+	private int ballXSpeed;
+	private int ballYSpeed;
+	private final int DEFAULT_BALLXSPEED = 300;
+	private final int DEFAULT_BALLYSPEED = 175;
 	Rectangle paddle = new Rectangle(65, 10, Color.DEEPPINK);
 	private Group root;
 	private BlockManager blockManager;
@@ -38,6 +42,7 @@ public class GameDriver {
 		millisecondDelay = 1000 / fps;
 		secondDelay = 1.0 / fps;
 		gameTitle = title;
+		levelNum = 1;
 	}
 	
 	protected final void startGameLoop() {
@@ -47,13 +52,18 @@ public class GameDriver {
 		animation.setCycleCount(Timeline.INDEFINITE);
 		animation.getKeyFrames().add(frame);
 		animation.play();
-		gameSurface.setOnKeyPressed(e -> paddleMove(e.getCode()));
+		gameSurface.setOnKeyPressed(e -> startBall(e.getCode()));
 	}
 	
 	private void step(double elapsedTime) {
-		System.out.println("Lives: " + lives);
-		ball.setCenterX(ball.getCenterX() + ballXSpeed * elapsedTime);
-		ball.setCenterY(ball.getCenterY() + ballYSpeed * elapsedTime);
+		if(blockManager.getBlockList().size() == 0) {
+			levelNum++;
+			setLevel(gameStage, 450, 400);
+		}
+		if(ballXSpeed != 0 && ballYSpeed != 0) {
+			ball.setCenterX(ball.getCenterX() + ballXSpeed * elapsedTime);
+			ball.setCenterY(ball.getCenterY() + ballYSpeed * elapsedTime);
+		}
 		paddleBounce();
 		ceilingAndWallBounce();
 		floorBounce();
@@ -103,14 +113,6 @@ public class GameDriver {
 			else if(block.speedToChange(ball).equals("x")) {
 				ballXSpeed *= -1;
 			}
-			
-			/*if(block.leftCollision(ball) || block.rightCollision(ball)) {
-				ballXSpeed *= -1;
-			}
-			if(block.topCollision(ball) || block.bottomCollision(ball)) {
-				ballYSpeed *= -1;
-			}*/
-			
 		} 
 	}
 	
@@ -136,6 +138,8 @@ public class GameDriver {
 	private void decrementLives() {
 		root.getChildren().remove(lifeCount);
 		lives--;
+		resetBall();
+		resetPaddle();
 		lifeCount = new Text(390, 390, "Lives: " + lives);
 		root.getChildren().add(lifeCount);
 	}
@@ -149,11 +153,13 @@ public class GameDriver {
         }
 	}
 	
-	public void setLevel(Stage myStage, int levelNum, double width, double height) {
+	public void setLevel(Stage myStage, double width, double height) {
+		gameStage = myStage;
 		root = new Group();
 		setAndDisplayLives();
 		makePaddle();
 		makeBall();
+		resetBall();
 		blockManager = new BlockManager(ball);
 		chooseLevel(levelNum);
 		Scene level = new Scene(root, width, height);
@@ -170,14 +176,33 @@ public class GameDriver {
 	}
 	
 	private void makePaddle() {
+		resetPaddle();
+		root.getChildren().add(paddle);
+	}
+	
+	private void resetPaddle() {
 		paddle.setX(175);
 		paddle.setY(350);
-		root.getChildren().add(paddle);
 	}
 	
 	private void makeBall() {
 		ball = new Circle(200, 300, 4);
 		root.getChildren().add(ball);
+	}
+	
+	private void resetBall() {
+		ball.setCenterX(200);
+		ball.setCenterY(300);
+		ballXSpeed = 0;
+		ballYSpeed = 0;
+	}
+	
+	private void startBall(KeyCode code) {
+		if((code == KeyCode.RIGHT || code == KeyCode.LEFT) && ballXSpeed == 0 && ballYSpeed == 0) {
+			ballXSpeed = DEFAULT_BALLXSPEED;
+			ballYSpeed = DEFAULT_BALLYSPEED;
+		}
+		paddleMove(code);
 	}
 	
 	private void chooseLevel(int levelNum) {
