@@ -23,6 +23,7 @@ public class GameDriver {
 	private int framesPerSecond;
 	private int millisecondDelay;
 	private double secondDelay;
+	private Timeline animation;
 	private String gameTitle;
 	private int levelNum;
 	private Circle ball;
@@ -30,9 +31,9 @@ public class GameDriver {
 	private Text lifeCount;
 	private int ballXSpeed;
 	private int ballYSpeed;
-	private final int DEFAULT_BALLXSPEED = 100;
-	private final int DEFAULT_BALLYSPEED = 75;
-	Rectangle paddle = new Rectangle(65, 10, Color.DEEPPINK);
+	public static final int DEFAULT_BALLXSPEED = 300;
+	public static int DEFAULT_BALLYSPEED = 225;
+	private Rectangle paddle;
 	private Group root;
 	private BlockManager blockManager;
 	public static final int KEY_INPUT_SPEED = 20;
@@ -42,21 +43,26 @@ public class GameDriver {
 		millisecondDelay = 1000 / fps;
 		secondDelay = 1.0 / fps;
 		gameTitle = title;
-		levelNum = 1;
+		levelNum = 2;
 	}
 	
 	protected final void startGameLoop() {
 		KeyFrame frame = new KeyFrame(Duration.millis(millisecondDelay),
                 e -> step(secondDelay));
-		Timeline animation = new Timeline();
+		animation = new Timeline();
 		animation.setCycleCount(Timeline.INDEFINITE);
 		animation.getKeyFrames().add(frame);
 		animation.play();
 		gameSurface.setOnKeyPressed(e -> startBall(e.getCode()));
 	}
 	
+	protected final void stopGameLoop() {
+		animation.stop();
+	}
+	
 	private void step(double elapsedTime) {
 		if(blockManager.getBlockList().size() == 0) {
+			stopGameLoop();
 			levelNum++;
 			setLevel(gameStage, 450, 400);
 			startGameLoop();
@@ -66,20 +72,20 @@ public class GameDriver {
 			ball.setCenterY(ball.getCenterY() + ballYSpeed * elapsedTime);
 		}
 		paddleBounce();
+		cornerBounce();
 		ceilingAndWallBounce();
 		floorBounce();
 		blockManager.addCollisions();  
 		blockBounce();
 		blockManager.cleanUp();
 		System.out.println("Root Size: " + root.getChildren().size());
-		System.out.println("Step Clean Up: " + blockManager.getCleanUp());
+		System.out.println("Ball X Speed: " + ballXSpeed);
+		System.out.println("Ball Y Speed: " + ballYSpeed);
 		for(Block x : blockManager.getCleanUp()) {
 			Rectangle xRect = x.getRectangle();
-			System.out.println("Contains block: " + root.getChildren().contains(xRect));
 			root.getChildren().remove(xRect);
 		}
 		blockManager.removeBlocks();
-		System.out.println("Root Size: " + root.getChildren().size());
 	}
 	
 	private void paddleBounce() {
@@ -91,18 +97,21 @@ public class GameDriver {
 			if(ball.getCenterX() > (paddle.getX() + (.75*paddle.getWidth()))) {
 				//if(ball.getCenterX() > (paddle.getX() + (.9*paddle.getWidth()))) {
 					ballXSpeed *= 1.2;
+					ballYSpeed *= 1.2;
 				//}
 				ballXSpeed = Math.abs(ballXSpeed);
 				return;
 			}
 			else if(ball.getCenterX() < (paddle.getX() + (.25*paddle.getWidth()))) {
 				//if(ball.getCenterX() < (paddle.getX() + (.1*paddle.getWidth()))) {
-					ballXSpeed *= 1.2;
+					ballXSpeed *= 1.1;
+					ballYSpeed *= 1.1;
 				//}
 				ballXSpeed = -1*Math.abs(ballXSpeed);
 				return;
 			}
 			ballXSpeed *= .95;
+			ballYSpeed *= .95;
 		} 
 	}
 	
@@ -126,6 +135,16 @@ public class GameDriver {
 				ball.getCenterX() + ball.getRadius() >= gameSurface.getWidth()) {
 			ballXSpeed *= -1;
 			return;
+		}
+	}
+	
+	private void cornerBounce() {
+		if((ball.getCenterX() == 1 && ball.getCenterY() == 1) ||
+				(ball.getCenterX() == 449 && ball.getCenterY() == 1) ||
+				(ball.getCenterX() == 449 && ball.getCenterY() == 399) ||
+				(ball.getCenterX() == 1 && ball.getCenterY() == 399)) {
+			ballXSpeed *= -1;
+			ballYSpeed *= -1;
 		}
 	}
 	
@@ -177,6 +196,7 @@ public class GameDriver {
 	}
 	
 	private void makePaddle() {
+		paddle = new Rectangle(65, 10, Color.DEEPPINK);
 		resetPaddle();
 		root.getChildren().add(paddle);
 	}
