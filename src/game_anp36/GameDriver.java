@@ -31,8 +31,8 @@ public class GameDriver {
 	private Text lifeCount;
 	private int ballXSpeed;
 	private int ballYSpeed;
-	public static final int DEFAULT_BALLXSPEED = 300;
-	public static int DEFAULT_BALLYSPEED = 225;
+	public static final int DEFAULT_BALLXSPEED = 100;
+	public static int DEFAULT_BALLYSPEED = 75;
 	private Rectangle paddle;
 	private Group root;
 	private BlockManager blockManager;
@@ -62,15 +62,9 @@ public class GameDriver {
 	
 	private void step(double elapsedTime) {
 		if(blockManager.getBlockList().size() == 0) {
-			stopGameLoop();
-			levelNum++;
-			setLevel(gameStage, 450, 400);
-			startGameLoop();
+			advanceLevel();
 		}
-		if(ballXSpeed != 0 && ballYSpeed != 0) {
-			ball.setCenterX(ball.getCenterX() + ballXSpeed * elapsedTime);
-			ball.setCenterY(ball.getCenterY() + ballYSpeed * elapsedTime);
-		}
+		updateBallPosition(elapsedTime);
 		paddleBounce();
 		cornerBounce();
 		ceilingAndWallBounce();
@@ -81,6 +75,24 @@ public class GameDriver {
 		System.out.println("Root Size: " + root.getChildren().size());
 		System.out.println("Ball X Speed: " + ballXSpeed);
 		System.out.println("Ball Y Speed: " + ballYSpeed);
+		removeBlocksFromGame();
+	}
+
+	private void updateBallPosition(double elapsedTime) {
+		if(ballXSpeed != 0 && ballYSpeed != 0) {
+			ball.setCenterX(ball.getCenterX() + ballXSpeed * elapsedTime);
+			ball.setCenterY(ball.getCenterY() + ballYSpeed * elapsedTime);
+		}
+	}
+
+	private void advanceLevel() {
+		stopGameLoop();
+		levelNum++;
+		setLevel(gameStage, 450, 400);
+		startGameLoop();
+	}
+
+	private void removeBlocksFromGame() {
 		for(Block x : blockManager.getCleanUp()) {
 			Rectangle xRect = x.getRectangle();
 			root.getChildren().remove(xRect);
