@@ -34,12 +34,14 @@ public class GameDriver {
 	public static final int DEFAULT_BALLXSPEED = 100;
 	public static int DEFAULT_BALLYSPEED = 75;
 	private Rectangle paddle;
+	private Rectangle lazer;
 	private boolean powerUpActive;
 	private boolean stickyPaddle;
 	private int powerUpClock;
 	private Group root;
 	private BlockManager blockManager;
 	private final int POWER_UP_MAX = 3;
+	private int ammo;
 	public static final int KEY_INPUT_SPEED = 20;
 	
 	public GameDriver(int fps, String title) {
@@ -71,11 +73,12 @@ public class GameDriver {
 		}
 		double ballYBefore = ball.getCenterY();
 		updateBallPosition(elapsedTime);
+		updateLazerPosition(elapsedTime);
 		double ballYAfter = ball.getCenterY();
 		if(powerUpActive) {
 			if(ballYBefore >= 300 && ballYAfter < 300) {
 				powerUpClock++;
-				if(powerUpClock > POWER_UP_MAX ) {
+				if(powerUpClock > POWER_UP_MAX && ammo == 0) {
 					deactivatePowerUp();
 				}
 			}
@@ -89,6 +92,7 @@ public class GameDriver {
 		deliverPowerUp();
 		blockManager.cleanUp();
 		removeBlocksFromGame();
+		System.out.println("Root Size: " + root.getChildren().size());
 	}
 
 	private void setPaddleColor() {
@@ -98,6 +102,10 @@ public class GameDriver {
 		else if(stickyPaddle) {
 			paddle.setFill(Color.PURPLE);
 		}
+		else if(ammo > 0) {
+			paddle.setFill(Color.MIDNIGHTBLUE);
+		}
+		else paddle.setFill(Color.GREEN);
 	}
 
 	private void deactivatePowerUp() {
@@ -180,6 +188,11 @@ public class GameDriver {
 				powerUpClock = 0;
 				powerUpActive = true;
 			}
+			else if(blockManager.getCollisions().get(0).getPowerUp() == 2) {
+				ammo = 5;
+				powerUpClock = 0;
+				powerUpActive = true;
+			}
 		}
 	}
 	
@@ -228,8 +241,32 @@ public class GameDriver {
 		if(stickyPaddle) {
 			releaseBall(code);
 		}
+		if(code == KeyCode.W && ammo > 0) {
+			lazer = makeLazer(code);
+		}
 	}
 	
+	private Rectangle makeLazer(KeyCode code) {
+		if(root.getChildren().contains(lazer)) {
+			return lazer;
+		}
+		Rectangle newlazer = new Rectangle(paddle.getX() + .5*paddle.getWidth(), paddle.getY(), 3, 20);
+		newlazer.setFill(Color.RED);
+		lazer = newlazer;
+		ammo--;
+		root.getChildren().add(lazer);
+		return newlazer;
+	}
+	
+	private void updateLazerPosition(double elapsedTime) {
+		if(lazer != null) {
+			lazer.setY(lazer.getY() - 5*DEFAULT_BALLYSPEED*elapsedTime);
+			if(lazer.getY() < 0) {
+				root.getChildren().remove(lazer);
+			}
+		}
+	}
+
 	private void releaseBall(KeyCode code) {
 		if(code == KeyCode.E) {
 			ballYSpeed = -1*DEFAULT_BALLYSPEED;
@@ -269,7 +306,8 @@ public class GameDriver {
 	}
 	
 	private void makePaddle() {
-		paddle = new Rectangle(65, 10, Color.GREEN);
+		paddle = new Rectangle(65, 10);
+		setPaddleColor();
 		resetPaddlePosition();
 		root.getChildren().add(paddle);
 	}
@@ -360,7 +398,6 @@ public class GameDriver {
 				BLOCK = new Block(block, "One Hit");
 			}
 			blockManager.addBlock(BLOCK);
-			System.out.println("Power Up #: " + BLOCK.getPowerUp());
 			blockXCoordinate += gap+50;
 		}
 	}

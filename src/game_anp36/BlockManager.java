@@ -41,11 +41,9 @@ public class BlockManager {
 				COLLISIONS.add(x);
 			}
 		}
-		System.out.println("Collisions: " + COLLISIONS);
 	}
 	
 	public void cleanUp() {
-		System.out.println("Number of Blocks: " + BLOCK_LIST.size());
 		CLEAN_UP_BLOCKS.clear();
 		for(Block x : COLLISIONS) {
 			if(x.checkIfDestroyed()) {
@@ -57,9 +55,6 @@ public class BlockManager {
 	public void removeBlocks() {
 		BLOCK_LIST.removeAll(CLEAN_UP_BLOCKS);
 		COLLISIONS.clear();
-		System.out.println("Clean Up: " + CLEAN_UP_BLOCKS);
-		System.out.println("Number of Blocks: " + BLOCK_LIST.size());
-		//return CLEAN_UP_BLOCKS;
 	}
 	
 }

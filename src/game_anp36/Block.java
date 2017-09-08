@@ -20,7 +20,7 @@ public class Block {
 		type = "One Hit";
 		Random rand = new Random();
 		//powerUp = rand.nextInt(10);
-		powerUp = 0;
+		powerUp = 2;
 	}
 	
 	//FIGURE OUT HOW TO CALL OTHER CONSTRUCTOR WITHIN THIS ONE
