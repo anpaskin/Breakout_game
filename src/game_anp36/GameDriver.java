@@ -66,7 +66,6 @@ public class GameDriver {
 		}
 		updateBallPosition(elapsedTime);
 		paddleBounce();
-		cornerBounce();
 		ceilingAndWallBounce();
 		floorBounce();
 		blockManager.addCollisions();  
@@ -132,9 +131,7 @@ public class GameDriver {
 			if(block.speedToChange(ball).equals("y")) {
 				ballYSpeed *= -1;
 			}  
-			else if(block.speedToChange(ball).equals("x")) {
-				ballXSpeed *= -1;
-			}
+			else ballXSpeed *= -1;
 		} 
 	}
 	
@@ -147,16 +144,6 @@ public class GameDriver {
 				ball.getCenterX() + ball.getRadius() >= gameSurface.getWidth()) {
 			ballXSpeed *= -1;
 			return;
-		}
-	}
-	
-	private void cornerBounce() {
-		if((ball.getCenterX() == 1 && ball.getCenterY() == 1) ||
-				(ball.getCenterX() == 449 && ball.getCenterY() == 1) ||
-				(ball.getCenterX() == 449 && ball.getCenterY() == 399) ||
-				(ball.getCenterX() == 1 && ball.getCenterY() == 399)) {
-			ballXSpeed *= -1;
-			ballYSpeed *= -1;
 		}
 	}
 	
@@ -195,6 +182,7 @@ public class GameDriver {
 		blockManager = new BlockManager(ball);
 		chooseLevel(levelNum);
 		Scene level = new Scene(root, width, height);
+		level.setFill(Color.LIGHTBLUE);
 		gameSurface = level;
 		myStage.setScene(level);
 		myStage.setTitle("Level " + levelNum);
@@ -208,7 +196,7 @@ public class GameDriver {
 	}
 	
 	private void makePaddle() {
-		paddle = new Rectangle(65, 10, Color.DEEPPINK);
+		paddle = new Rectangle(65, 10, Color.GREEN);
 		resetPaddle();
 		root.getChildren().add(paddle);
 	}
@@ -287,7 +275,7 @@ public class GameDriver {
 			block.setStrokeWidth(5);
 			block.setStroke(Color.BLACK);
 			root.getChildren().add(block);
-			Block BLOCK = new Block(block);
+			Block BLOCK = new Block(block, "Two Hit");
 			blockManager.addBlock(BLOCK);
 			blockXCoordinate += gap+50;
 		}

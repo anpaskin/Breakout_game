@@ -48,7 +48,7 @@ public class BlockManager {
 		System.out.println("Number of Blocks: " + BLOCK_LIST.size());
 		CLEAN_UP_BLOCKS.clear();
 		for(Block x : COLLISIONS) {
-			if(x.isDestroyed()) {
+			if(x.checkIfDestroyed()) {
 				CLEAN_UP_BLOCKS.add(x);
 			}
 		}

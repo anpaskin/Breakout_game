@@ -1,26 +1,29 @@
 package game_anp36;
 
-import com.sun.javafx.geom.BaseBounds;
-import com.sun.javafx.geom.transform.BaseTransform;
-import com.sun.javafx.jmx.MXNodeAlgorithm;
-import com.sun.javafx.jmx.MXNodeAlgorithmContext;
-import com.sun.javafx.sg.prism.NGNode;
-
-import javafx.scene.Node;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 
-public class Block extends Node {
+public class Block {
 
 	private Rectangle BLOCK;
 	private boolean isDestroyed;
+	private int collisions;
+	private String type;
 	
 	public Block(Rectangle block) {
 		BLOCK = block;
+		collisions = 0;
+		type = "One Hit";
 	}
 	
-	public boolean isDestroyed() {
-		return isDestroyed;
+	public Block(Rectangle block, String blockType) {
+		BLOCK = block;
+		collisions = 0;
+		type = blockType;
+		if(type.equals("Two Hit")) {
+			BLOCK.setFill(Color.RED);
+		}
 	}
 	
 	public boolean ballCollide(Circle ball) {
@@ -29,10 +32,26 @@ public class Block extends Node {
 				ball.getCenterY() + ball.getRadius() >= BLOCK.getY() &&
 				ball.getCenterY() - ball.getRadius() <= BLOCK.getY() + BLOCK.getHeight()) {
 			System.out.println("Ball collision");
-			isDestroyed = true;
+			collisions++;
+			checkIfDestroyed();
 			return true;
 		}
 		else return false;
+	}
+	
+	public boolean checkIfDestroyed() {
+		if(type.equals("One Hit") && collisions >= 1) {
+			isDestroyed = true;
+		}
+		else if(type.equals("Two Hit")) {
+			if(collisions == 1) {
+				BLOCK.setFill(Color.ORANGE);
+			}
+			else if(collisions >= 2) {
+				isDestroyed = true;
+			}
+		}
+		return isDestroyed;
 	}
 	
 	public Rectangle getRectangle() {
@@ -48,70 +67,22 @@ public class Block extends Node {
 		double w = BLOCK.getWidth();
 		double h = BLOCK.getHeight();
 		if(
-			((cX + r) - bX < (bY + h) - (cY + r) &&
-			 (cX + r) - bX < (cY - r) - bY) ||
-			((bX + w) - (cX - r) < (bY + h) - (cY + r) &&
-			((bX + w) - (cX - r) < (cY - r) - bY))
+			((cX + r) - bX <= (bY + h) - (cY + r) &&
+			 (cX + r) - bX <= (cY - r) - bY) ||
+			((bX + w) - (cX - r) <= (bY + h) - (cY + r) &&
+			((bX + w) - (cX - r) <= (cY - r) - bY))
 				) {
 				return "x";
 		}
 		else if(
-					((cY - r) - bY < (cX - r) - bX &&
-					 (cY - r) - bY < (bX + w) - (cX + r)) ||
-					((bY + h) - (cY + r) < (cX - r) - bX &&
-					 (bY + h) - (cY + r) < (bX + w) - (cX + r))
+					((cY - r) - bY <= (cX - r) - bX &&
+					 (cY - r) - bY <= (bX + w) - (cX + r)) ||
+					((bY + h) - (cY + r) <= (cX - r) - bX &&
+					 (bY + h) - (cY + r) <= (bX + w) - (cX + r))
 				) {
 			return "y";
 		}
-		else return "No collision";
-	}
-	
-	public boolean leftCollision(Circle ball) {
-		return ball.getCenterX() + ball.getRadius() == BLOCK.getX() &&
-				(ball.getCenterY() + ball.getRadius() >= BLOCK.getY() &&
-				ball.getCenterY() - ball.getRadius() <= BLOCK.getY() + BLOCK.getHeight());
-	}
-	
-	public boolean rightCollision(Circle ball) {
-		return ball.getCenterX() - ball.getRadius() == BLOCK.getX() + BLOCK.getWidth() &&
-				(ball.getCenterY() + ball.getRadius() >= BLOCK.getY() &&
-				ball.getCenterY() - ball.getRadius() <= BLOCK.getY() + BLOCK.getHeight());
-	}
-	
-	public boolean topCollision(Circle ball) {
-		return ball.getCenterY() + ball.getRadius() == BLOCK.getY() &&
-				(ball.getCenterX() + ball.getRadius() >= BLOCK.getX() &&
-				ball.getCenterX() - ball.getRadius() <= BLOCK.getX() + BLOCK.getWidth());
-	}
-	
-	public boolean bottomCollision(Circle ball) {
-		return ball.getCenterY() - ball.getRadius() == BLOCK.getY() + BLOCK.getHeight() &&
-				(ball.getCenterX() + ball.getRadius() >= BLOCK.getX() &&
-				ball.getCenterX() - ball.getRadius() <= BLOCK.getX() + BLOCK.getWidth());
-	}
-
-	@Override
-	protected NGNode impl_createPeer() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public BaseBounds impl_computeGeomBounds(BaseBounds bounds, BaseTransform tx) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	protected boolean impl_computeContains(double localX, double localY) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public Object impl_processMXNode(MXNodeAlgorithm alg, MXNodeAlgorithmContext ctx) {
-		// TODO Auto-generated method stub
-		return null;
+		else return "x and y";
 	}
 	
 }
