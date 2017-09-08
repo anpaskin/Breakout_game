@@ -32,7 +32,8 @@ public class JavaFXPractice extends Application {
 	}
 	
 	public static void main(String[] args) {
-		Application.launch(args);
+		System.out.println((int)(Math.random()*10));
+		//Application.launch(args);
 	}
 	
 }

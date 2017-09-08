@@ -1,5 +1,7 @@
 package game_anp36;
 
+import java.util.Random;
+
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
@@ -10,13 +12,18 @@ public class Block {
 	private boolean isDestroyed;
 	private int collisions;
 	private String type;
+	private double powerUp;
 	
 	public Block(Rectangle block) {
 		BLOCK = block;
 		collisions = 0;
 		type = "One Hit";
+		Random rand = new Random();
+		powerUp = rand.nextInt()*10;
+		//powerUp = 0;
 	}
 	
+	//FIGURE OUT HOW TO CALL OTHER CONSTRUCTOR WITHIN THIS ONE
 	public Block(Rectangle block, String blockType) {
 		BLOCK = block;
 		collisions = 0;
@@ -24,6 +31,9 @@ public class Block {
 		if(type.equals("Two Hit")) {
 			BLOCK.setFill(Color.RED);
 		}
+		Random rand = new Random();
+		powerUp = rand.nextInt(10);
+		//powerUp = 0;
 	}
 	
 	public boolean ballCollide(Circle ball) {
@@ -56,6 +66,10 @@ public class Block {
 	
 	public Rectangle getRectangle() {
 		return BLOCK;
+	}
+	
+	public double getPowerUp() {
+		return powerUp;
 	}
 	
 	public String speedToChange(Circle ball) {

@@ -34,6 +34,7 @@ public class GameDriver {
 	public static final int DEFAULT_BALLXSPEED = 100;
 	public static int DEFAULT_BALLYSPEED = 75;
 	private Rectangle paddle;
+	private boolean powerUpActive;
 	private Group root;
 	private BlockManager blockManager;
 	public static final int KEY_INPUT_SPEED = 20;
@@ -43,7 +44,8 @@ public class GameDriver {
 		millisecondDelay = 1000 / fps;
 		secondDelay = 1.0 / fps;
 		gameTitle = title;
-		levelNum = 2;
+		levelNum = 1;
+		powerUpActive = false;
 	}
 	
 	protected final void startGameLoop() {
@@ -70,6 +72,7 @@ public class GameDriver {
 		floorBounce();
 		blockManager.addCollisions();  
 		blockBounce();
+		deliverPowerUp();
 		blockManager.cleanUp();
 		System.out.println("Root Size: " + root.getChildren().size());
 		System.out.println("Ball X Speed: " + ballXSpeed);
@@ -133,6 +136,15 @@ public class GameDriver {
 			}  
 			else ballXSpeed *= -1;
 		} 
+	}
+	
+	private void deliverPowerUp() {
+		if(!blockManager.getCollisions().isEmpty() && !powerUpActive) {
+			if(blockManager.getCollisions().get(0).getPowerUp() == 0) {
+				paddle.setWidth(paddle.getWidth()*1.5);
+				powerUpActive = true;
+			}
+		}
 	}
 	
 	private void ceilingAndWallBounce() {
@@ -242,7 +254,7 @@ public class GameDriver {
 	}
 	
 	public void setLevelOne(Group root) {
-		setBlockRow(root, 0, 0, 9, 0);
+		setBlockRow(root, 50, 0, 4, 50);
 		setBlockRow(root, 0, 30, 5, 50);
 		setBlockRow(root, 50, 60, 4, 50);
 		setBlockRow(root, 0, 90, 5, 50);
@@ -275,12 +287,16 @@ public class GameDriver {
 			block.setStrokeWidth(5);
 			block.setStroke(Color.BLACK);
 			root.getChildren().add(block);
-			Block BLOCK = new Block(block, "Two Hit");
+			Block BLOCK;
+			if(x % 2 == 0) {
+				BLOCK = new Block(block, "Two Hit");
+			}
+			else {
+				BLOCK = new Block(block, "One Hit");
+			}
 			blockManager.addBlock(BLOCK);
+			System.out.println("Power Up #: " + BLOCK.getPowerUp());
 			blockXCoordinate += gap+50;
 		}
 	}
-	
-	
-	
 }
