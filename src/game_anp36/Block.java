@@ -19,7 +19,8 @@ public class Block {
 		collisions = 0;
 		type = "One Hit";
 		Random rand = new Random();
-		powerUp = rand.nextInt(10);
+		//powerUp = rand.nextInt(10);
+		powerUp = 0;
 	}
 	
 	//FIGURE OUT HOW TO CALL OTHER CONSTRUCTOR WITHIN THIS ONE

@@ -35,9 +35,11 @@ public class GameDriver {
 	public static int DEFAULT_BALLYSPEED = 75;
 	private Rectangle paddle;
 	private boolean powerUpActive;
+	private boolean stickyPaddle;
+	private int powerUpClock;
 	private Group root;
 	private BlockManager blockManager;
-	private int powerUpClock;
+	private final int POWER_UP_MAX = 3;
 	public static final int KEY_INPUT_SPEED = 20;
 	
 	public GameDriver(int fps, String title) {
@@ -73,11 +75,12 @@ public class GameDriver {
 		if(powerUpActive) {
 			if(ballYBefore >= 300 && ballYAfter < 300) {
 				powerUpClock++;
-				if(powerUpClock > 5) {
+				if(powerUpClock > POWER_UP_MAX ) {
 					deactivatePowerUp();
 				}
 			}
 		}
+		setPaddleColor();
 		paddleBounce();
 		ceilingAndWallBounce();
 		floorBounce();
@@ -88,19 +91,28 @@ public class GameDriver {
 		removeBlocksFromGame();
 	}
 
+	private void setPaddleColor() {
+		if(paddle.getWidth() > 65) {
+			paddle.setFill(Color.FIREBRICK);
+		}
+		else if(stickyPaddle) {
+			paddle.setFill(Color.PURPLE);
+		}
+	}
+
 	private void deactivatePowerUp() {
 		powerUpClock = 0;
 		powerUpActive = false;
 		if(paddle.getWidth() > 65) {
 			resetPaddleLength();
-		}	
+		}
+		stickyPaddle = false;
+		paddle.setFill(Color.GREEN);
 	}
 
 	private void updateBallPosition(double elapsedTime) {
-		if(ballXSpeed != 0 && ballYSpeed != 0) {
-			ball.setCenterX(ball.getCenterX() + ballXSpeed * elapsedTime);
-			ball.setCenterY(ball.getCenterY() + ballYSpeed * elapsedTime);
-		}
+		ball.setCenterX(ball.getCenterX() + ballXSpeed * elapsedTime);
+		ball.setCenterY(ball.getCenterY() + ballYSpeed * elapsedTime);
 	}
 
 	private void advanceLevel() {
@@ -118,31 +130,33 @@ public class GameDriver {
 		blockManager.removeBlocks();
 	}
 	
-	private void paddleBounce() {
+	private boolean paddleBounce() {
 		if(ball.getCenterY() + ball.getRadius() >= paddle.getY() &&
 				ball.getCenterY() - ball.getRadius() <= paddle.getY() + paddle.getHeight() &&
 				ball.getCenterX() - ball.getRadius() <= paddle.getX() + paddle.getWidth() &&
 				ball.getCenterX() + ball.getRadius() >= paddle.getX()) {
+			if(stickyPaddle) {
+				ballYSpeed = 0;
+				ballXSpeed = 0;
+			}
 			ballYSpeed *= -1;
 			if(ball.getCenterX() > (paddle.getX() + (.75*paddle.getWidth()))) {
-				//if(ball.getCenterX() > (paddle.getX() + (.9*paddle.getWidth()))) {
-					ballXSpeed *= 1.2;
-					ballYSpeed *= 1.2;
-				//}
+				ballXSpeed *= 1.2;
+				ballYSpeed *= 1.2;
 				ballXSpeed = Math.abs(ballXSpeed);
-				return;
+				return true;
 			}
 			else if(ball.getCenterX() < (paddle.getX() + (.25*paddle.getWidth()))) {
-				//if(ball.getCenterX() < (paddle.getX() + (.1*paddle.getWidth()))) {
-					ballXSpeed *= 1.1;
-					ballYSpeed *= 1.1;
-				//}
+				ballXSpeed *= 1.1;
+				ballYSpeed *= 1.1;
 				ballXSpeed = -1*Math.abs(ballXSpeed);
-				return;
+				return true;
 			}
 			ballXSpeed *= .95;
 			ballYSpeed *= .95;
+			return true;
 		} 
+		return false;
 	}
 	
 	private void blockBounce() {
@@ -158,6 +172,11 @@ public class GameDriver {
 		if(!blockManager.getCollisions().isEmpty() && !powerUpActive) {
 			if(blockManager.getCollisions().get(0).getPowerUp() == 0) {
 				paddle.setWidth(paddle.getWidth()*1.5);
+				powerUpClock = 0;
+				powerUpActive = true;
+			}
+			else if(blockManager.getCollisions().get(0).getPowerUp() == 1) {
+				stickyPaddle = true;
 				powerUpClock = 0;
 				powerUpActive = true;
 			}
@@ -179,7 +198,6 @@ public class GameDriver {
 	private void floorBounce() {
 		if(ball.getCenterY() + ball.getRadius() >= gameSurface.getHeight()) {
 			decrementLives();
-			deactivatePowerUp();
 			ballYSpeed *= -1;
 		}
 	}
@@ -187,6 +205,7 @@ public class GameDriver {
 	private void decrementLives() {
 		root.getChildren().remove(lifeCount);
 		lives--;
+		deactivatePowerUp();
 		resetBall();
 		resetPaddlePosition();
 		lifeCount = new Text(390, 390, "Lives: " + lives);
@@ -196,10 +215,34 @@ public class GameDriver {
 	private void paddleMove(KeyCode code) {
 		if(code == KeyCode.RIGHT && paddle.getX() + paddle.getWidth() <= gameSurface.getWidth()) {
 			paddle.setX(paddle.getX() + KEY_INPUT_SPEED);
+			if(stickyPaddle && paddleBounce()) {
+				ball.setCenterX(ball.getCenterX() + KEY_INPUT_SPEED);
+			}
 		}
 		else if (code == KeyCode.LEFT && paddle.getX() >= 0) {
             paddle.setX(paddle.getX() - KEY_INPUT_SPEED);
+            if(stickyPaddle && paddleBounce()) {
+				ball.setCenterX(ball.getCenterX() - KEY_INPUT_SPEED);
+			}
         }
+		if(stickyPaddle) {
+			releaseBall(code);
+		}
+	}
+	
+	private void releaseBall(KeyCode code) {
+		if(code == KeyCode.E) {
+			ballYSpeed = -1*DEFAULT_BALLYSPEED;
+			ball.setCenterY(ball.getCenterY() + ballYSpeed*secondDelay);
+			ballXSpeed = DEFAULT_BALLXSPEED;
+			ball.setCenterX(ball.getCenterX() + ballXSpeed*secondDelay);
+		}
+		else if(code == KeyCode.Q) {
+			ballYSpeed = -1*DEFAULT_BALLYSPEED;
+			ball.setCenterY(ball.getCenterY() + ballYSpeed*secondDelay);
+			ballXSpeed = -1*DEFAULT_BALLXSPEED;
+			ball.setCenterX(ball.getCenterX() + ballXSpeed*secondDelay);
+		}
 	}
 	
 	public void setLevel(Stage myStage, double width, double height) {
