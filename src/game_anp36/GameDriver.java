@@ -37,6 +37,7 @@ public class GameDriver {
 	private boolean powerUpActive;
 	private Group root;
 	private BlockManager blockManager;
+	private int powerUpClock;
 	public static final int KEY_INPUT_SPEED = 20;
 	
 	public GameDriver(int fps, String title) {
@@ -66,7 +67,17 @@ public class GameDriver {
 		if(blockManager.getBlockList().size() == 0) {
 			advanceLevel();
 		}
+		double ballYBefore = ball.getCenterY();
 		updateBallPosition(elapsedTime);
+		double ballYAfter = ball.getCenterY();
+		if(powerUpActive) {
+			if(ballYBefore >= 300 && ballYAfter < 300) {
+				powerUpClock++;
+				if(powerUpClock > 5) {
+					deactivatePowerUp();
+				}
+			}
+		}
 		paddleBounce();
 		ceilingAndWallBounce();
 		floorBounce();
@@ -74,10 +85,15 @@ public class GameDriver {
 		blockBounce();
 		deliverPowerUp();
 		blockManager.cleanUp();
-		System.out.println("Root Size: " + root.getChildren().size());
-		System.out.println("Ball X Speed: " + ballXSpeed);
-		System.out.println("Ball Y Speed: " + ballYSpeed);
 		removeBlocksFromGame();
+	}
+
+	private void deactivatePowerUp() {
+		powerUpClock = 0;
+		powerUpActive = false;
+		if(paddle.getWidth() > 65) {
+			resetPaddleLength();
+		}	
 	}
 
 	private void updateBallPosition(double elapsedTime) {
@@ -142,6 +158,7 @@ public class GameDriver {
 		if(!blockManager.getCollisions().isEmpty() && !powerUpActive) {
 			if(blockManager.getCollisions().get(0).getPowerUp() == 0) {
 				paddle.setWidth(paddle.getWidth()*1.5);
+				powerUpClock = 0;
 				powerUpActive = true;
 			}
 		}
@@ -162,6 +179,7 @@ public class GameDriver {
 	private void floorBounce() {
 		if(ball.getCenterY() + ball.getRadius() >= gameSurface.getHeight()) {
 			decrementLives();
+			deactivatePowerUp();
 			ballYSpeed *= -1;
 		}
 	}
@@ -170,7 +188,7 @@ public class GameDriver {
 		root.getChildren().remove(lifeCount);
 		lives--;
 		resetBall();
-		resetPaddle();
+		resetPaddlePosition();
 		lifeCount = new Text(390, 390, "Lives: " + lives);
 		root.getChildren().add(lifeCount);
 	}
@@ -209,13 +227,17 @@ public class GameDriver {
 	
 	private void makePaddle() {
 		paddle = new Rectangle(65, 10, Color.GREEN);
-		resetPaddle();
+		resetPaddlePosition();
 		root.getChildren().add(paddle);
 	}
 	
-	private void resetPaddle() {
+	private void resetPaddlePosition() {
 		paddle.setX(175);
 		paddle.setY(350);
+	}
+	
+	private void resetPaddleLength() {
+		paddle.setWidth(65);
 	}
 	
 	private void makeBall() {

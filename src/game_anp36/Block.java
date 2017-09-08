@@ -19,21 +19,16 @@ public class Block {
 		collisions = 0;
 		type = "One Hit";
 		Random rand = new Random();
-		powerUp = rand.nextInt()*10;
-		//powerUp = 0;
+		powerUp = rand.nextInt(10);
 	}
 	
 	//FIGURE OUT HOW TO CALL OTHER CONSTRUCTOR WITHIN THIS ONE
 	public Block(Rectangle block, String blockType) {
-		BLOCK = block;
-		collisions = 0;
+		this(block);
 		type = blockType;
 		if(type.equals("Two Hit")) {
 			BLOCK.setFill(Color.RED);
 		}
-		Random rand = new Random();
-		powerUp = rand.nextInt(10);
-		//powerUp = 0;
 	}
 	
 	public boolean ballCollide(Circle ball) {
