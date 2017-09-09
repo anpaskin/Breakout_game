@@ -1,5 +1,6 @@
 package game_anp36;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 import javafx.scene.paint.Color;
@@ -14,6 +15,8 @@ public class Block {
 	private int collisions;
 	private String type;
 	private double powerUp;
+	public static final int WIDTH = 50;
+	public static final int HEIGHT = 30;
 	
 	public Block(Rectangle block) {
 		BLOCK = block;
@@ -22,7 +25,6 @@ public class Block {
 		type = "One Hit";
 		Random rand = new Random();
 		powerUp = rand.nextInt(10);
-		//powerUp = 2;
 	}
 	
 	public Block(Rectangle block, String blockType) {
@@ -30,6 +32,9 @@ public class Block {
 		type = blockType;
 		if(type.equals("Two Hit")) {
 			BLOCK.setFill(Color.RED);
+		}
+		else if(type.equals("Traveling")) {
+			BLOCK.setFill(Color.WHITE);
 		}
 	}
 	
@@ -43,6 +48,10 @@ public class Block {
 	
 	public boolean getIsDestroyed() {
 		return isDestroyed;
+	}
+	
+	public String getType() {
+		return type;
 	}
 	
 	public boolean ballCollide(Circle ball) {
@@ -79,6 +88,14 @@ public class Block {
 		else if(type.equals("Two Hit")) {
 			if(collisions == 1) {
 				BLOCK.setFill(Color.ORANGE);
+			}
+			else if(collisions >= 2) {
+				isDestroyed = true;
+			}
+		}
+		else if(type.equals("Traveling")) {
+			if(collisions == 1) {
+				isDestroyed = false;
 			}
 			else if(collisions >= 2) {
 				isDestroyed = true;

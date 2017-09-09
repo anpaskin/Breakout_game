@@ -1,5 +1,10 @@
 package game_anp36;
 
+import java.nio.Buffer;
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
+import java.util.ArrayList;
+
 import javax.xml.soap.Node;
 
 import javafx.animation.KeyFrame;
@@ -14,7 +19,6 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-//how do you get it to move smoothly like that, the paddle
 
 public class GameDriver {
 	
@@ -43,6 +47,8 @@ public class GameDriver {
 	private final int POWER_UP_MAX = 3;
 	private int ammo;
 	public static final int KEY_INPUT_SPEED = 20;
+	public static final int NUM_ROWS = 5;
+	public static final int NUM_COLS = 9;
 	
 	public GameDriver(int fps, String title) {
 		framesPerSecond = fps;
@@ -277,9 +283,7 @@ public class GameDriver {
 				lazer.setX(paddle.getX() + .5*paddle.getWidth());
 				lazer.setY(paddle.getY() - lazer.getHeight());
 				ammo--;
-				//root.getChildren().remove(lazer);
 			}
-			//if(ammo == 0) lazer.setFill(Color.TRANSPARENT);
 			lazer.setY(lazer.getY() - 5*DEFAULT_BALLYSPEED*elapsedTime);
 		}
 	}
@@ -382,33 +386,36 @@ public class GameDriver {
 	}
 	
 	public void setLevelTwo(Group root) {
-		for(int x = 0; x < 5; x++) {
+		for(int x = 0; x < NUM_ROWS; x++) {
 			setBlockRow(root, 0, x*30, 5, 50);
 		}
 	}
 	
 	public void setLevelThree(Group root) {
-		for(int x = 0; x < 5; x++) {
+		for(int x = 0; x < NUM_ROWS; x++) {
 			setBlockRow(root, 0, x*30, 9, 0);
 		}
 	}
 	
 	public void setLevelFour(Group root) {
-		for(int x = 0; x < 5; x++) {
+		for(int x = 0; x < NUM_ROWS; x++) {
 			setBlockRow(root, 0, x*30, 9, 0);
 		}
 	}
 	
 	private void setBlockRow(Group root, int blockXCoordinate, int blockYCoordinate, int blockNum, int gap) {
 		for(int x = 0; x < blockNum; x++) {
-			Rectangle block = new Rectangle(50, 30, Color.GRAY);
+			Rectangle block = new Rectangle(Block.WIDTH, Block.HEIGHT, Color.GRAY);
 			block.setX(blockXCoordinate);
 			block.setY(blockYCoordinate);
 			block.setStrokeWidth(5);
 			block.setStroke(Color.BLACK);
 			root.getChildren().add(block);
 			Block BLOCK;
-			if(x % 2 == 0) {
+			if(x % 3 == 0) {
+				BLOCK = new Block(block, "Traveling");
+			}
+			else if(x % 2 == 0) {
 				BLOCK = new Block(block, "Two Hit");
 			}
 			else {
@@ -418,4 +425,5 @@ public class GameDriver {
 			blockXCoordinate += gap+50;
 		}
 	}
+
 }
