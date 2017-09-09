@@ -48,6 +48,8 @@ public class GameDriver {
 	private int ammo;
 	private boolean paused;
 	private SplashScreen pauseScreen;
+	private boolean homeScreenActive;
+	private SplashScreen homeScreen;
 	public static final int KEY_INPUT_SPEED = 20;
 	public static final int NUM_ROWS = 5;
 	public static final int NUM_COLS = 9;
@@ -80,7 +82,7 @@ public class GameDriver {
 			advanceLevel();
 		}
 		double ballYBefore = ball.getCenterY();
-		if(!paused) updateBallPosition(elapsedTime);
+		if(!paused && !homeScreenActive) updateBallPosition(elapsedTime);
 		double ballYAfter = ball.getCenterY();
 		if(powerUpActive) {
 			if(ballYBefore >= 300 && ballYAfter < 300) {
@@ -95,7 +97,7 @@ public class GameDriver {
 		ceilingAndWallBounce();
 		floorBounce();
 		blockManager.addCollisions(lazer);
-		if(!paused) updateLazerPosition(elapsedTime);
+		if(!paused && !homeScreenActive) updateLazerPosition(elapsedTime);
 		blockBounce();
 		deliverPowerUp();
 		blockManager.cleanUp();
@@ -362,6 +364,7 @@ public class GameDriver {
 			ballYSpeed = DEFAULT_BALLYSPEED;
 		}
 		paddleMove(code);
+		leaveHomeScreen(code);
 		pause(code);
 	}
 	
@@ -376,6 +379,15 @@ public class GameDriver {
 			else {
 				paused = false;
 				root.getChildren().removeAll(pauseScreen.bundle());
+			}
+		}
+	}
+	
+	private void leaveHomeScreen(KeyCode code) {
+		if(code == KeyCode.SPACE) {
+			if(homeScreenActive) {
+				homeScreenActive = false;
+				root.getChildren().removeAll(homeScreen.bundle());
 			}
 		}
 	}
@@ -401,6 +413,13 @@ public class GameDriver {
 		setBlockRow(root, 50, 60, 4, 50);
 		setBlockRow(root, 0, 90, 5, 50);
 		setBlockRow(root, 50, 120, 4, 50);
+		initializeHomeScreen();
+	}
+	
+	private void initializeHomeScreen() {
+		homeScreenActive = true;
+		homeScreen = new SplashScreen(new Rectangle(450, 400), Color.PINK, new Text("HOME"));
+		root.getChildren().addAll(homeScreen.bundle());
 	}
 	
 	public void setLevelTwo(Group root) {
