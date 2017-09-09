@@ -5,7 +5,7 @@ import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 
-import javax.xml.soap.Node;
+//import javax.xml.soap.Node;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -80,7 +80,7 @@ public class GameDriver {
 			advanceLevel();
 		}
 		double ballYBefore = ball.getCenterY();
-		updateBallPosition(elapsedTime);
+		if(!paused) updateBallPosition(elapsedTime);
 		double ballYAfter = ball.getCenterY();
 		if(powerUpActive) {
 			if(ballYBefore >= 300 && ballYAfter < 300) {
@@ -95,7 +95,7 @@ public class GameDriver {
 		ceilingAndWallBounce();
 		floorBounce();
 		blockManager.addCollisions(lazer);
-		updateLazerPosition(elapsedTime);
+		if(!paused) updateLazerPosition(elapsedTime);
 		blockBounce();
 		deliverPowerUp();
 		blockManager.cleanUp();
@@ -369,12 +369,13 @@ public class GameDriver {
 		if(code == KeyCode.P) {
 			if(!paused) {
 				paused = true;
-				pauseScreen = new SplashScreen(new Rectangle(450, 400), Color.PINK);
-				root.getChildren().add(pauseScreen.getScreen());
+				pauseScreen = new SplashScreen(new Rectangle(450, 400), Color.PINK, new Text("PAUSED"));
+				pauseScreen.addText(165, 100, "Press 'P' to resume");
+				root.getChildren().addAll(pauseScreen.bundle());
 			}
 			else {
 				paused = false;
-				root.getChildren().remove(pauseScreen.getScreen());
+				root.getChildren().removeAll(pauseScreen.bundle());
 			}
 		}
 	}
