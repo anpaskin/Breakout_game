@@ -9,15 +9,15 @@ import javafx.scene.shape.Rectangle;
 public class Block {
 
 	private Rectangle BLOCK;
-	private boolean ballCollision;
 	private boolean isDestroyed;
+	private boolean lazerCollision;
 	private int collisions;
 	private String type;
 	private double powerUp;
 	
 	public Block(Rectangle block) {
 		BLOCK = block;
-		ballCollision = false;
+		lazerCollision = false;
 		collisions = 0;
 		type = "One Hit";
 		Random rand = new Random();
@@ -33,16 +33,29 @@ public class Block {
 		}
 	}
 	
+	public int getCollisions() {
+		return collisions;
+	}
+
+	public boolean getLazerCollision() {
+		return lazerCollision;
+	}
+	
+	public boolean getIsDestroyed() {
+		return isDestroyed;
+	}
+	
 	public boolean ballCollide(Circle ball) {
 		if(ball.getCenterX() + ball.getRadius() >= BLOCK.getX() &&
 				ball.getCenterX() - ball.getRadius() <= BLOCK.getX() + BLOCK.getWidth() &&
 				ball.getCenterY() + ball.getRadius() >= BLOCK.getY() &&
 				ball.getCenterY() - ball.getRadius() <= BLOCK.getY() + BLOCK.getHeight()) {
 			collisions++;
+			System.out.println("Collisions: " + collisions);
 			checkIfDestroyed();
-			ballCollision = true;
+			return true;
 		}
-		return ballCollision;
+		return false;
 	}
 	
 	public boolean lazerCollide(Rectangle lazer) {
@@ -50,11 +63,12 @@ public class Block {
 				lazer.getY() <= BLOCK.getY() + BLOCK.getHeight() &&
 				lazer.getX() + lazer.getWidth() >= BLOCK.getX() &&
 				lazer.getX() <= BLOCK.getX() + BLOCK.getWidth()) {
+			lazerCollision = true;
 			collisions++;
 			checkIfDestroyed();
-			ballCollision = false;
 			return true;
 		}
+		lazerCollision = false;
 		return false;
 	}
 	
@@ -75,10 +89,6 @@ public class Block {
 	
 	public Rectangle getRectangle() {
 		return BLOCK;
-	}
-	
-	public boolean getBallCollision() {
-		return ballCollision;
 	}
 	
 	public double getPowerUp() {

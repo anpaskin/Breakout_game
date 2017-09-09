@@ -38,6 +38,7 @@ public class BlockManager {
 	public void addCollisions(Rectangle lazer) {
 		for(Block x : BLOCK_LIST) {
 			if(x.ballCollide(BALL) || x.lazerCollide(lazer)) {
+				System.out.println("Collision");
 				COLLISIONS.add(x);
 			}
 		}
@@ -46,7 +47,7 @@ public class BlockManager {
 	public void cleanUp() {
 		CLEAN_UP_BLOCKS.clear();
 		for(Block x : COLLISIONS) {
-			if(x.checkIfDestroyed()) {
+			if(x.getIsDestroyed()) {
 				CLEAN_UP_BLOCKS.add(x);
 			}
 		}

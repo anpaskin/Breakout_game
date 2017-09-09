@@ -68,12 +68,6 @@ public class GameDriver {
 	}
 	
 	private void step(double elapsedTime) {
-		if(lazer != null) {
-			System.out.println("Lazer X: " + lazer.getX());
-			System.out.println("Lazer Y: " + lazer.getY());
-			System.out.println();
-		}
-		else System.out.println("Lazer Null");
 		if(blockManager.getBlockList().size() == 0) {
 			advanceLevel();
 		}
@@ -178,7 +172,8 @@ public class GameDriver {
 	
 	private void blockBounce() {
 		for(Block block : blockManager.getCollisions()) {
-			if(block.getBallCollision()) {
+			if(!block.getLazerCollision()) {
+				System.out.println("Collisions: " + block.getCollisions());
 				if(block.speedToChange(ball).equals("y")) {
 					ballYSpeed *= -1;
 				}  
