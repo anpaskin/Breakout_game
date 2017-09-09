@@ -46,6 +46,8 @@ public class GameDriver {
 	private BlockManager blockManager;
 	private final int POWER_UP_MAX = 3;
 	private int ammo;
+	private boolean paused;
+	private SplashScreen pauseScreen;
 	public static final int KEY_INPUT_SPEED = 20;
 	public static final int NUM_ROWS = 5;
 	public static final int NUM_COLS = 9;
@@ -360,6 +362,21 @@ public class GameDriver {
 			ballYSpeed = DEFAULT_BALLYSPEED;
 		}
 		paddleMove(code);
+		pause(code);
+	}
+	
+	private void pause(KeyCode code) {
+		if(code == KeyCode.P) {
+			if(!paused) {
+				paused = true;
+				pauseScreen = new SplashScreen(new Rectangle(450, 400), Color.PINK);
+				root.getChildren().add(pauseScreen.getScreen());
+			}
+			else {
+				paused = false;
+				root.getChildren().remove(pauseScreen.getScreen());
+			}
+		}
 	}
 	
 	private void chooseLevel(int levelNum) {
