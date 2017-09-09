@@ -31,8 +31,8 @@ public class GameDriver {
 	private Text lifeCount;
 	private int ballXSpeed;
 	private int ballYSpeed;
-	public static final int DEFAULT_BALLXSPEED = 100;
-	public static int DEFAULT_BALLYSPEED = 75;
+	public static final int DEFAULT_BALLXSPEED = 200;
+	public static int DEFAULT_BALLYSPEED = 150;
 	private Rectangle paddle;
 	private Rectangle lazer;
 	private boolean powerUpActive;
@@ -68,31 +68,36 @@ public class GameDriver {
 	}
 	
 	private void step(double elapsedTime) {
+		if(lazer != null) {
+			System.out.println("Lazer X: " + lazer.getX());
+			System.out.println("Lazer Y: " + lazer.getY());
+			System.out.println();
+		}
+		else System.out.println("Lazer Null");
 		if(blockManager.getBlockList().size() == 0) {
 			advanceLevel();
 		}
 		double ballYBefore = ball.getCenterY();
 		updateBallPosition(elapsedTime);
-		updateLazerPosition(elapsedTime);
 		double ballYAfter = ball.getCenterY();
 		if(powerUpActive) {
 			if(ballYBefore >= 300 && ballYAfter < 300) {
 				powerUpClock++;
-				if(powerUpClock > POWER_UP_MAX && ammo == 0) {
-					deactivatePowerUp();
-				}
+			}
+			if((powerUpClock > POWER_UP_MAX || paddle.getFill().equals(Color.MIDNIGHTBLUE)) && ammo == 0) {
+				deactivatePowerUp();
 			}
 		}
 		setPaddleColor();
 		paddleBounce();
 		ceilingAndWallBounce();
 		floorBounce();
-		blockManager.addCollisions();  
+		blockManager.addCollisions(lazer);
+		updateLazerPosition(elapsedTime);
 		blockBounce();
 		deliverPowerUp();
 		blockManager.cleanUp();
 		removeBlocksFromGame();
-		System.out.println("Root Size: " + root.getChildren().size());
 	}
 
 	private void setPaddleColor() {
@@ -115,6 +120,8 @@ public class GameDriver {
 			resetPaddleLength();
 		}
 		stickyPaddle = false;
+		ammo = 0;
+		if(lazer != null) lazer.setFill(Color.TRANSPARENT);
 		paddle.setFill(Color.GREEN);
 	}
 
@@ -126,6 +133,8 @@ public class GameDriver {
 	private void advanceLevel() {
 		stopGameLoop();
 		levelNum++;
+		deactivatePowerUp();
+		lazer = null;
 		setLevel(gameStage, 450, 400);
 		startGameLoop();
 	}
@@ -169,11 +178,23 @@ public class GameDriver {
 	
 	private void blockBounce() {
 		for(Block block : blockManager.getCollisions()) {
-			if(block.speedToChange(ball).equals("y")) {
-				ballYSpeed *= -1;
-			}  
-			else ballXSpeed *= -1;
-		} 
+			if(block.getBallCollision()) {
+				if(block.speedToChange(ball).equals("y")) {
+					ballYSpeed *= -1;
+				}  
+				else ballXSpeed *= -1;
+			}
+		}
+	}
+	
+	private boolean checkForLazerCollision() {
+		for(Block block : blockManager.getCollisions()) {
+			if(block.lazerCollide(lazer)) {
+				System.out.println("Lazer Collision");
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	private void deliverPowerUp() {
@@ -242,28 +263,29 @@ public class GameDriver {
 			releaseBall(code);
 		}
 		if(code == KeyCode.W && ammo > 0) {
-			lazer = makeLazer(code);
+			lazer = makeLazer();
 		}
 	}
 	
-	private Rectangle makeLazer(KeyCode code) {
-		if(root.getChildren().contains(lazer)) {
-			return lazer;
-		}
+	private Rectangle makeLazer() {
 		Rectangle newlazer = new Rectangle(paddle.getX() + .5*paddle.getWidth(), paddle.getY(), 3, 20);
-		newlazer.setFill(Color.RED);
+		newlazer.setFill(Color.YELLOW);
 		lazer = newlazer;
-		ammo--;
 		root.getChildren().add(lazer);
+		System.out.println("Added Lazer");
 		return newlazer;
 	}
 	
 	private void updateLazerPosition(double elapsedTime) {
-		if(lazer != null) {
-			lazer.setY(lazer.getY() - 5*DEFAULT_BALLYSPEED*elapsedTime);
-			if(lazer.getY() < 0) {
-				root.getChildren().remove(lazer);
+		if(lazer != null && ammo > 0) {
+			if(lazer.getY() < 0 || checkForLazerCollision()) {
+				lazer.setX(paddle.getX() + .5*paddle.getWidth());
+				lazer.setY(paddle.getY() - lazer.getHeight());
+				ammo--;
+				//root.getChildren().remove(lazer);
 			}
+			//if(ammo == 0) lazer.setFill(Color.TRANSPARENT);
+			lazer.setY(lazer.getY() - 5*DEFAULT_BALLYSPEED*elapsedTime);
 		}
 	}
 

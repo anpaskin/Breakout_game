@@ -3,6 +3,7 @@ package game_anp36;
 import java.util.*;
 
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
 
 public class BlockManager {
 
@@ -20,7 +21,6 @@ public class BlockManager {
 	
 	public void addBlock(Block e) {
 		BLOCK_LIST.add(e);
-		System.out.println("Block List: " + BLOCK_LIST);
 	}
 	
 	public List<Block> getBlockList() {
@@ -35,9 +35,9 @@ public class BlockManager {
 		return CLEAN_UP_BLOCKS;
 	}
 	
-	public void addCollisions() {
+	public void addCollisions(Rectangle lazer) {
 		for(Block x : BLOCK_LIST) {
-			if(x.ballCollide(BALL)) {
+			if(x.ballCollide(BALL) || x.lazerCollide(lazer)) {
 				COLLISIONS.add(x);
 			}
 		}
@@ -55,6 +55,10 @@ public class BlockManager {
 	public void removeBlocks() {
 		BLOCK_LIST.removeAll(CLEAN_UP_BLOCKS);
 		COLLISIONS.clear();
+	}
+	
+	public void destroy(Block block) {
+		BLOCK_LIST.remove(block);
 	}
 	
 }
