@@ -70,7 +70,7 @@ public class GameDriver {
 		animation.setCycleCount(Timeline.INDEFINITE);
 		animation.getKeyFrames().add(frame);
 		animation.play();
-		gameSurface.setOnKeyPressed(e -> startBall(e.getCode()));
+		gameSurface.setOnKeyPressed(e -> input(e.getCode()));
 	}
 	
 	protected final void stopGameLoop() {
@@ -251,6 +251,13 @@ public class GameDriver {
 		root.getChildren().add(lifeCount);
 	}
 	
+	private void incrementLives() {
+		root.getChildren().remove(lifeCount);
+		lives++;
+		lifeCount = new Text(390, 390, "Lives: " + lives);
+		root.getChildren().add(lifeCount);
+	}
+	
 	private void paddleMove(KeyCode code) {
 		if(code == KeyCode.RIGHT && paddle.getX() + paddle.getWidth() <= gameSurface.getWidth()) {
 			paddle.setX(paddle.getX() + KEY_INPUT_SPEED);
@@ -358,14 +365,41 @@ public class GameDriver {
 		ballYSpeed = 0;
 	}
 	
+	private void input(KeyCode code) {
+		if(!homeScreenActive) {
+			startBall(code);
+			paddleMove(code);
+			pause(code);
+		}
+		leaveHomeScreen(code);
+		cheatCodes(code);
+	}
+	
+	private void cheatCodes(KeyCode code) {
+		if(code == KeyCode.ENTER) {
+			advanceLevel();
+		}
+		if(code == KeyCode.D) {
+			deactivatePowerUp();
+		}
+		if(code == KeyCode.A) {
+			incrementLives();
+		}
+		if(code == KeyCode.TAB) {
+			ballXSpeed *= 1.5;
+			ballYSpeed *= 1.5;
+		}
+		if(code == KeyCode.SHIFT) {
+			ballXSpeed /= 1.5;
+			ballYSpeed /= 1.5;
+		}
+	}
+
 	private void startBall(KeyCode code) {
 		if((code == KeyCode.RIGHT || code == KeyCode.LEFT) && ballXSpeed == 0 && ballYSpeed == 0) {
 			ballXSpeed = DEFAULT_BALLXSPEED;
 			ballYSpeed = DEFAULT_BALLYSPEED;
 		}
-		paddleMove(code);
-		leaveHomeScreen(code);
-		pause(code);
 	}
 	
 	private void pause(KeyCode code) {
@@ -419,6 +453,7 @@ public class GameDriver {
 	private void initializeHomeScreen() {
 		homeScreenActive = true;
 		homeScreen = new SplashScreen(new Rectangle(450, 400), Color.PINK, new Text("HOME"));
+		//ADD INSTRUCTIONS
 		root.getChildren().addAll(homeScreen.bundle());
 	}
 	
