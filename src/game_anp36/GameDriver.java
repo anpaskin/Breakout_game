@@ -52,6 +52,7 @@ public class GameDriver {
 	private SplashScreen homeScreen;
 	private boolean gameOver;
 	private SplashScreen gameOverScreen;
+	private int consecBlocks;
 	public static final int KEY_INPUT_SPEED = 20;
 	public static final int NUM_ROWS = 5;
 	public static final int NUM_COLS = 9;
@@ -107,12 +108,20 @@ public class GameDriver {
 		deliverPowerUp();
 		blockManager.cleanUp();
 		removeBlocksFromGame();
+		getLifeBonus();
+	}
+	
+	private void getLifeBonus() {
+		if(consecBlocks >= 5) {
+			incrementLives();
+			consecBlocks = 0;
+		}
 	}
 	
 	private void gameOver() {
 		gameOver = true;
 		gameOverScreen = new SplashScreen(new Rectangle(450, 400), Color.PINK, new Text("GAME OVER"));
-		//ADD TEXT
+		gameOverScreen.addText(130, 110, "Press the space bar to restart.");
 		root.getChildren().addAll(gameOverScreen.bundle());
 	}
 
@@ -155,8 +164,10 @@ public class GameDriver {
 
 	private void removeBlocksFromGame() {
 		for(Block x : blockManager.getCleanUp()) {
+			consecBlocks++;
 			Rectangle xRect = x.getRectangle();
 			root.getChildren().remove(xRect);
+			
 		}
 		blockManager.removeBlocks();
 	}
@@ -166,6 +177,7 @@ public class GameDriver {
 				ball.getCenterY() - ball.getRadius() <= paddle.getY() + paddle.getHeight() &&
 				ball.getCenterX() - ball.getRadius() <= paddle.getX() + paddle.getWidth() &&
 				ball.getCenterX() + ball.getRadius() >= paddle.getX()) {
+			consecBlocks = 0;
 			if(stickyPaddle) {
 				ballYSpeed = 0;
 				ballXSpeed = 0;
@@ -193,7 +205,6 @@ public class GameDriver {
 	private void blockBounce() {
 		for(Block block : blockManager.getCollisions()) {
 			if(!block.getLazerCollision()) {
-				System.out.println("Collisions: " + block.getCollisions());
 				if(block.speedToChange(ball).equals("y")) {
 					ballYSpeed *= -1;
 				}  
@@ -209,7 +220,6 @@ public class GameDriver {
 	private boolean checkForLazerCollision() {
 		for(Block block : blockManager.getCollisions()) {
 			if(block.lazerCollide(lazer)) {
-				System.out.println("Lazer Collision");
 				return true;
 			}
 		}
@@ -298,7 +308,6 @@ public class GameDriver {
 		newlazer.setFill(Color.YELLOW);
 		lazer = newlazer;
 		root.getChildren().add(lazer);
-		System.out.println("Added Lazer");
 		return newlazer;
 	}
 	
@@ -480,7 +489,19 @@ public class GameDriver {
 	private void initializeHomeScreen() {
 		homeScreenActive = true;
 		homeScreen = new SplashScreen(new Rectangle(450, 400), Color.PINK, new Text("HOME"));
-		//ADD INSTRUCTIONS
+		homeScreen.addText(5, 100, "Welcome to Block Breaker!");
+		homeScreen.addText(5, 115, "Use the left and right arrow keys to move the paddle.");
+		homeScreen.addText(5, 130, "Gray blocks are destroyed on 1st collision.");
+		homeScreen.addText(5, 145, "Red blocks turn orange on 1st collision and are destroyed on 2nd.");
+		homeScreen.addText(5, 160, "White blocks turn gray and travel to a new location on 1st collision,");
+		homeScreen.addText(15, 175, "and they are destroyed on 2nd.");
+		homeScreen.addText(5, 190, "Green blocks speed up the ball are destroyed on 1st collision.");
+		homeScreen.addText(5, 205, "Random blocks deliver one of three different powerups on collision.");
+		homeScreen.addText(5, 220, "Powerups are the paddle lengthener, sticky paddle, and lazer paddle.");
+		homeScreen.addText(5, 235, "Release the ball from the sticky paddle using the 'Q' and 'E' keys.");
+		homeScreen.addText(5, 250, "Shoot lazers using the 'W' key.");
+		homeScreen.addText(5, 265, "Destroy five blocks in a single paddle hit and you'll earn a bonus life!");
+		homeScreen.addText(5, 280, "Press space to go to Level 1, then press the right arrow key to start!");
 		root.getChildren().addAll(homeScreen.bundle());
 	}
 	
