@@ -7,6 +7,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
+/**SplashScreen is used to create the home screen, pause screen, and game over screen.*/
 public class SplashScreen {
 
 	private Rectangle screen;
@@ -37,6 +38,10 @@ public class SplashScreen {
 		screen.setFill(color);
 	}
 	
+	/** bundle makes a list of all Nodes in the SplashScreen
+	 * so that they may be added to the Group in GameDriver.
+	 * @return		Returns and ArrayList of all the Nodes in the
+	 * 				SplashScreen.*/
 	public ArrayList<Node> bundle() {
 		ArrayList<Node> bundle = new ArrayList<Node>();
 		bundle.add(screen);

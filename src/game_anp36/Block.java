@@ -57,19 +57,26 @@ public class Block {
 		return type;
 	}
 	
+	/** ballCollide checks for a ball-block collision and checks the destroyed status of the block.
+	 * @param ball		Circle representing ball to check for ball-block collision
+	 * @return			Returns true if ball-block collision is detected
+	 * 					Returns false otherwise */
 	public boolean ballCollide(Circle ball) {
 		if(ball.getCenterX() + ball.getRadius() >= BLOCK.getX() &&
 				ball.getCenterX() - ball.getRadius() <= BLOCK.getX() + BLOCK.getWidth() &&
 				ball.getCenterY() + ball.getRadius() >= BLOCK.getY() &&
 				ball.getCenterY() - ball.getRadius() <= BLOCK.getY() + BLOCK.getHeight()) {
 			collisions++;
-			System.out.println("Collisions: " + collisions);
 			checkIfDestroyed();
 			return true;
 		}
 		return false;
 	}
 	
+	/** lazerCollide checks for a lazer-block collision and checks the destroyed status of the block.
+	 * @param lazer		Rectangle representing lazer to check for lazer-block collision
+	 * @return			Returns true if lazer-block collision is detected
+	 * 					Returns false otherwise */
 	public boolean lazerCollide(Rectangle lazer) {
 		if(lazer != null &&
 				lazer.getY() <= BLOCK.getY() + BLOCK.getHeight() &&
@@ -84,6 +91,9 @@ public class Block {
 		return false;
 	}
 	
+	/** checkIfDestroyed checks and sets the destroyed status of the block based on type and number of collisions.
+	 * @return			Returns true if block is destroyed
+	 * 					Returns false otherwise*/
 	public boolean checkIfDestroyed() {
 		if((type.equals("One Hit") || type.equals("Speed")) && collisions >= 1) {
 			isDestroyed = true;
@@ -104,6 +114,12 @@ public class Block {
 		return powerUp;
 	}
 	
+	/** speedToChange tells the GameDriver in which direction to change the speed of the ball following
+	 * a ball-block collision. The finds the side of the block to which the ball is closest upon collision
+	 * and returns the appropriate direction (x or y) in which to change the speed.
+	 * @param ball		Circle representing ball that collides with block
+	 * @return			Returns "x" if the ball hits the left or right side of the block, "y" if the ball
+	 * 					hits the top or bottom of the block, and "x and y" if the ball hits a corner of the block*/
 	public String speedToChange(Circle ball) {
 		double r = ball.getRadius();
 		double cX = ball.getCenterX();

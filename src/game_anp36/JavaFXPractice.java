@@ -34,23 +34,6 @@ public class JavaFXPractice extends Application {
 	public static void main(String[] args) {
 		System.out.println((int)(Math.random()*10));
 		//Application.launch(args);
-		
-		
-		
-		int max = 0;
-		for(int x = 0; x < arraySize; x++) {
-			if(array[x] > max) {
-				max = array[x];
-			}
-		}
-		return max;
-		
-		
-		
-		
-		
-		
-		
 	}
 	
 }
