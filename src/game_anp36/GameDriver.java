@@ -50,6 +50,8 @@ public class GameDriver {
 	private SplashScreen pauseScreen;
 	private boolean homeScreenActive;
 	private SplashScreen homeScreen;
+	private boolean gameOver;
+	private SplashScreen gameOverScreen;
 	public static final int KEY_INPUT_SPEED = 20;
 	public static final int NUM_ROWS = 5;
 	public static final int NUM_COLS = 9;
@@ -78,6 +80,9 @@ public class GameDriver {
 	}
 	
 	private void step(double elapsedTime) {
+		if(lives == 0) {
+			gameOver();
+		}
 		if(blockManager.getBlockList().size() == 0) {
 			advanceLevel();
 		}
@@ -102,6 +107,13 @@ public class GameDriver {
 		deliverPowerUp();
 		blockManager.cleanUp();
 		removeBlocksFromGame();
+	}
+	
+	private void gameOver() {
+		gameOver = true;
+		gameOverScreen = new SplashScreen(new Rectangle(450, 400), Color.PINK, new Text("GAME OVER"));
+		//ADD TEXT
+		root.getChildren().addAll(gameOverScreen.bundle());
 	}
 
 	private void setPaddleColor() {
@@ -137,8 +149,6 @@ public class GameDriver {
 	private void advanceLevel() {
 		stopGameLoop();
 		levelNum++;
-		deactivatePowerUp();
-		lazer = null;
 		setLevel(gameStage, 450, 400);
 		startGameLoop();
 	}
@@ -326,6 +336,8 @@ public class GameDriver {
 		Scene level = new Scene(root, width, height);
 		level.setFill(Color.LIGHTBLUE);
 		gameSurface = level;
+		deactivatePowerUp();
+		lazer = null;
 		myStage.setScene(level);
 		myStage.setTitle("Level " + levelNum);
 		myStage.show();
@@ -372,9 +384,20 @@ public class GameDriver {
 			pause(code);
 		}
 		leaveHomeScreen(code);
+		leaveGameOverScreen(code);
 		cheatCodes(code);
 	}
 	
+	private void leaveGameOverScreen(KeyCode code) {
+		if(gameOver && code == KeyCode.SPACE) {
+			stopGameLoop();
+			levelNum = 1;
+			setLevel(gameStage, 450, 400);
+			gameOver = false;
+			startGameLoop();
+		}
+	}
+
 	private void cheatCodes(KeyCode code) {
 		if(code == KeyCode.ENTER) {
 			advanceLevel();
