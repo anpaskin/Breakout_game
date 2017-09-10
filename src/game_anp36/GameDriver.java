@@ -198,6 +198,10 @@ public class GameDriver {
 					ballYSpeed *= -1;
 				}  
 				else ballXSpeed *= -1;
+				if(block.getType().equals("Speed")) {
+					ballYSpeed *= 1.2;
+					ballXSpeed *= 1.2;
+				}
 			}
 		}
 	}
