@@ -16,7 +16,7 @@ public class MainGame extends Application {
 	
 	@Override
 	public void start(Stage mainStage) {
-		GameDriver gameDriver = new GameDriver(60, "Breakout");
+		GameDriver gameDriver = new GameDriver(60);
 		gameDriver.setLevel(mainStage, 450, 400);
 		gameDriver.startGameLoop();
 	}

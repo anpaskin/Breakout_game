@@ -7,6 +7,11 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 
+/**
+ * 
+ * @author Aaron Paskin
+ *
+ */
 public class Block {
 
 	private Rectangle BLOCK;

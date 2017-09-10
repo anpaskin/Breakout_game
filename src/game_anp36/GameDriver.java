@@ -1,12 +1,5 @@
 package game_anp36;
 
-/*import java.nio.Buffer;
-import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
-import java.util.ArrayList;*/
-
-//import javax.xml.soap.Node;
-
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.Group;
@@ -19,15 +12,19 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+/** GameDriver is the main game engine. MainGame initializes a new GameDriver, calls
+ * setLevel, and calls startGameLoop to start the game.
+ *
+ * @author Aaron Paskin
+ *
+ */
 public class GameDriver {
 	
 	private Stage gameStage;
 	private Scene gameSurface;
-	private int framesPerSecond;
 	private int millisecondDelay;
 	private double secondDelay;
 	private Timeline animation;
-	private String gameTitle;
 	private int levelNum;
 	private Circle ball;
 	private int lives;
@@ -56,11 +53,9 @@ public class GameDriver {
 	public static final int NUM_ROWS = 5;
 	public static final int NUM_COLS = 9;
 	
-	public GameDriver(int fps, String title) {
-		framesPerSecond = fps;
+	public GameDriver(int fps) {
 		millisecondDelay = 1000 / fps;
 		secondDelay = 1.0 / fps;
-		gameTitle = title;
 		levelNum = 1;
 		powerUpActive = false;
 	}

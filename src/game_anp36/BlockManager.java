@@ -9,7 +9,11 @@ import javafx.scene.shape.Rectangle;
 /** BlockManager manages the statuses and positions of the blocks in a given level. It uses
  BLOCK_LIST to keep track of all existing blocks, COLLISIONS to keep track of all hit blocks
  in a given step, and CLEAN_UP_BLOCKS to keep track of the blocks that are destroyed in a given step.
- It also gets a ball from the GameDriver (or whatever initializes the BlockManager).*/
+ It also gets a ball from the GameDriver (or whatever initializes the BlockManager).
+ *
+ *@author Aaron Paskin
+ *
+ */
 public class BlockManager {
 
 	private List<Block> BLOCK_LIST;	

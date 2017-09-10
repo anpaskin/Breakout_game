@@ -7,7 +7,11 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
-/**SplashScreen is used to create the home screen, pause screen, and game over screen.*/
+/**SplashScreen is used to create the home screen, pause screen, and game over screen.
+ * 
+ * @author Aaron Paskin
+ * 
+ * */
 public class SplashScreen {
 
 	private Rectangle screen;
