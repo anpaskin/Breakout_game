@@ -399,7 +399,7 @@ public class GameDriver {
 	}
 
 	private void cheatCodes(KeyCode code) {
-		if(code == KeyCode.ENTER) {
+		if(code == KeyCode.ENTER && levelNum < 3) {
 			advanceLevel();
 		}
 		if(code == KeyCode.D) {
@@ -507,7 +507,10 @@ public class GameDriver {
 			block.setStroke(Color.BLACK);
 			root.getChildren().add(block);
 			Block BLOCK;
-			if(x % 3 == 0) {
+			if(x % 5 == 0) {
+				BLOCK = new Block(block, "Speed");
+			}
+			else if(x % 3 == 0) {
 				BLOCK = new Block(block, "Traveling");
 			}
 			else if(x % 2 == 0) {

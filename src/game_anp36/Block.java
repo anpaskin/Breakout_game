@@ -36,6 +36,9 @@ public class Block {
 		else if(type.equals("Traveling")) {
 			BLOCK.setFill(Color.WHITE);
 		}
+		else if(type.equals("Speed")) {
+			BLOCK.setFill(Color.GREENYELLOW);
+		}
 	}
 	
 	public int getCollisions() {
@@ -82,20 +85,14 @@ public class Block {
 	}
 	
 	public boolean checkIfDestroyed() {
-		if(type.equals("One Hit") && collisions >= 1) {
+		if((type.equals("One Hit") || type.equals("Speed")) && collisions >= 1) {
 			isDestroyed = true;
 		}
-		else if(type.equals("Two Hit")) {
+		else if(type.equals("Two Hit") || type.equals("Traveling")) {
 			if(collisions == 1) {
-				BLOCK.setFill(Color.ORANGE);
-			}
-			else if(collisions >= 2) {
-				isDestroyed = true;
-			}
-		}
-		else if(type.equals("Traveling")) {
-			if(collisions == 1) {
-				isDestroyed = false;
+				if(type.equals("Two Hit")) {
+					BLOCK.setFill(Color.ORANGE);
+				}
 			}
 			else if(collisions >= 2) {
 				isDestroyed = true;
