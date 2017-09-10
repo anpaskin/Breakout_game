@@ -89,12 +89,7 @@ public class Block {
 			isDestroyed = true;
 		}
 		else if(type.equals("Two Hit") || type.equals("Traveling")) {
-			if(collisions == 1) {
-				if(type.equals("Two Hit")) {
-					BLOCK.setFill(Color.ORANGE);
-				}
-			}
-			else if(collisions >= 2) {
+			if(collisions >= 2) {
 				isDestroyed = true;
 			}
 		}

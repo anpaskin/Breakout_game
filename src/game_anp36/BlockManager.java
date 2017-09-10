@@ -6,6 +6,10 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 
+/** BlockManager manages the statuses and positions of the blocks in a given level. It uses
+ BLOCK_LIST to keep track of all existing blocks, COLLISIONS to keep track of all hit blocks
+ in a given step, and CLEAN_UP_BLOCKS to keep track of the blocks that are destroyed in a given step.
+ It also gets a ball from the GameDriver (or whatever initializes the BlockManager).*/
 public class BlockManager {
 
 	private List<Block> BLOCK_LIST;	
@@ -19,7 +23,7 @@ public class BlockManager {
 		CLEAN_UP_BLOCKS = new HashSet<Block>();
 		BALL = ball;
 	}
-	
+
 	public void addBlock(Block e) {
 		BLOCK_LIST.add(e);
 	}
@@ -36,6 +40,10 @@ public class BlockManager {
 		return CLEAN_UP_BLOCKS;
 	}
 	
+	/** addCollisions iterates through the BLOCK_LIST and adds each block that
+	 * has been hit by the ball or a lazer to the COLLISIONS list. Method also changes
+	 * block color upon collision depending on block type.
+	 * @param lazer		Rectangle that represents the lazer to check for lazer-block collisions*/
 	public void addCollisions(Rectangle lazer) {
 		for(Block x : BLOCK_LIST) {
 			if(x.ballCollide(BALL) || x.lazerCollide(lazer)) {
@@ -43,13 +51,18 @@ public class BlockManager {
 					moveToOpenSpace(x);
 					x.getRectangle().setFill(Color.GRAY);
 				}
+				else if(x.getType().equals("Two Hit") && x.getCollisions() == 1) {
+					x.getRectangle().setFill(Color.ORANGE);
+				}
 				COLLISIONS.add(x);
 			}
 		}
 	}
 	
+	/** moveToOpenSpace moves the passed block to a random position that does not contain a block and is
+	 * used to relocate a Traveling Block upon first collision.
+	 * @param blockToMove		Traveling Block to relocate*/
 	private void moveToOpenSpace(Block blockToMove) {
-		System.out.println("Old Position: (" + blockToMove.getRectangle().getX() + ", " + blockToMove.getRectangle().getY() + ")");
 		ArrayList<Integer> openSpaces = getOpenSpaces();
 		Random rand = new Random();
 		int xy = openSpaces.get(rand.nextInt(openSpaces.size()));
@@ -57,9 +70,13 @@ public class BlockManager {
 		int y = (xy / 9) * Block.HEIGHT;
 		blockToMove.getRectangle().setX(x);
 		blockToMove.getRectangle().setY(y);
-		System.out.println("New Position: (" + blockToMove.getRectangle().getX() + ", " + blockToMove.getRectangle().getY() + ")");
 	}
 	
+	/** getOpenSpaces creates and returns a list of all locations that do not contain a block, to be used
+	 * in moveToOpenSpace.
+	 * @return		An ArrayList of Integers representing open locations for a traveling block to
+	 * 				be moved to. Each location is represented by a number 0-44, with 0-8 being the top
+	 * 				row locations from left to right, 9-17 being the second row from left to right, etc.*/
 	private ArrayList<Integer> getOpenSpaces() {
 		ArrayList<Integer> openSpaces = new ArrayList<Integer>();
 		boolean add = true;
@@ -76,10 +93,10 @@ public class BlockManager {
 				space++;
 			}
 		}
-		System.out.println(openSpaces);
 		return openSpaces;
 	}
 	
+	/** cleanUp checks if each block in COLLISIONS is destroyed and, if it is, adds it to CLEAN_UP_BLOCKS.*/
 	public void cleanUp() {
 		CLEAN_UP_BLOCKS.clear();
 		for(Block x : COLLISIONS) {

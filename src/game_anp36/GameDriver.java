@@ -1,9 +1,9 @@
 package game_anp36;
 
-import java.nio.Buffer;
+/*import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
-import java.util.ArrayList;
+import java.util.ArrayList;*/
 
 //import javax.xml.soap.Node;
 
@@ -18,7 +18,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-
 
 public class GameDriver {
 	
@@ -80,6 +79,12 @@ public class GameDriver {
 		animation.stop();
 	}
 	
+	/** step updates the positions and statuses of all elements of the game. It ends
+	 * the game if the player runs out of lives, advances to the next level once a player
+	 * destroys all of the blocks, updates the position of the ball, delivers and 
+	 * deactivates power-ups, detects collisions with the walls, paddle, and blocks, 
+	 * removes blocks when destroyed, and adds bonus lives when appropriate.
+	 * @param elapsedTime		time since last call to step*/
 	private void step(double elapsedTime) {
 		if(lives == 0) {
 			gameOver();
@@ -111,6 +116,8 @@ public class GameDriver {
 		getLifeBonus();
 	}
 	
+	/** getLifeBonus rewards the player with a bonus life if he/she destroys
+	 * five or more blocks in one paddle hit.*/
 	private void getLifeBonus() {
 		if(consecBlocks >= 5) {
 			incrementLives();
@@ -118,6 +125,7 @@ public class GameDriver {
 		}
 	}
 	
+	/** gameOver initializes and displays the game over screen. */
 	private void gameOver() {
 		gameOver = true;
 		gameOverScreen = new SplashScreen(new Rectangle(450, 400), Color.PINK, new Text("GAME OVER"));
@@ -125,6 +133,7 @@ public class GameDriver {
 		root.getChildren().addAll(gameOverScreen.bundle());
 	}
 
+	/** setPaddleColor sets the color of the paddle depending on what power-up is active.*/
 	private void setPaddleColor() {
 		if(paddle.getWidth() > 65) {
 			paddle.setFill(Color.FIREBRICK);
@@ -137,7 +146,9 @@ public class GameDriver {
 		}
 		else paddle.setFill(Color.GREEN);
 	}
-
+	
+	/** deactivatePowerUp sets the paddle back to its default status after losing its power-up.
+	 * It also resets the powerUpClock and ammo.*/
 	private void deactivatePowerUp() {
 		powerUpClock = 0;
 		powerUpActive = false;
@@ -150,11 +161,15 @@ public class GameDriver {
 		paddle.setFill(Color.GREEN);
 	}
 
+	/** updateBallPosition uses an elapsed time to update the position of the ball
+	 * by adding to its previous coordinates.
+	 * @param elapsedTime		time since last call to step*/
 	private void updateBallPosition(double elapsedTime) {
 		ball.setCenterX(ball.getCenterX() + ballXSpeed * elapsedTime);
 		ball.setCenterY(ball.getCenterY() + ballYSpeed * elapsedTime);
 	}
 
+	/** advanceLevel moves the game to the next level after all blocks are destroyed.*/
 	private void advanceLevel() {
 		stopGameLoop();
 		levelNum++;
@@ -162,6 +177,10 @@ public class GameDriver {
 		startGameLoop();
 	}
 
+	/** removeBlocksFromGame destroys appropriate blocks by iterating through
+	 * the BlockManager's clean up list. Destroying blocks includes removing them
+	 * from the game scene as well as from the BlockManager. Method also updates 
+	 * consecBlocks so that a bonus life may be added when necessary.*/
 	private void removeBlocksFromGame() {
 		for(Block x : blockManager.getCleanUp()) {
 			consecBlocks++;
@@ -172,6 +191,8 @@ public class GameDriver {
 		blockManager.removeBlocks();
 	}
 	
+	/** paddleBounce checks for a ball-paddle collision and updates the ball speed
+	 * depending on where on the paddle the ball collides.*/
 	private boolean paddleBounce() {
 		if(ball.getCenterY() + ball.getRadius() >= paddle.getY() &&
 				ball.getCenterY() - ball.getRadius() <= paddle.getY() + paddle.getHeight() &&
@@ -202,6 +223,7 @@ public class GameDriver {
 		return false;
 	}
 	
+	/** blockBounce checks for a ball-block collision and updates the ball speed accordingly.*/
 	private void blockBounce() {
 		for(Block block : blockManager.getCollisions()) {
 			if(!block.getLazerCollision()) {
@@ -217,6 +239,9 @@ public class GameDriver {
 		}
 	}
 	
+	/** checkForLazerCollision checks for a lazer-block collision.
+	 * @return		true if lazer-block collision exists
+	 * 				false otherwise */
 	private boolean checkForLazerCollision() {
 		for(Block block : blockManager.getCollisions()) {
 			if(block.lazerCollide(lazer)) {
@@ -226,6 +251,8 @@ public class GameDriver {
 		return false;
 	}
 	
+	/** deliverPowerUp checks the power-up status of the paddle and delivers the
+	 * appropriate power-up depending on the power-up held by the hit block.*/
 	private void deliverPowerUp() {
 		if(!blockManager.getCollisions().isEmpty() && !powerUpActive) {
 			if(blockManager.getCollisions().get(0).getPowerUp() == 0) {
@@ -246,6 +273,8 @@ public class GameDriver {
 		}
 	}
 	
+	/** ceilingAndWallBounce checks for ball-ceiling and ball-wall collisions
+	 * and updates the ball speed accordingly.*/
 	private void ceilingAndWallBounce() {
 		if(ball.getCenterY() - ball.getRadius() < 0) {
 			ballYSpeed *= -1;
@@ -258,13 +287,15 @@ public class GameDriver {
 		}
 	}
 	
+	/** floorBounce decrements number of lives by one if the ball hits the bottom of the window.*/
 	private void floorBounce() {
 		if(ball.getCenterY() + ball.getRadius() >= gameSurface.getHeight()) {
 			decrementLives();
-			ballYSpeed *= -1;
 		}
 	}
 	
+	/** decrementLives subtracts one life, updates the lifeCount display, deactivates any active
+	 * power-ups, and resets the ball and paddle positions.*/
 	private void decrementLives() {
 		root.getChildren().remove(lifeCount);
 		lives--;
@@ -275,6 +306,7 @@ public class GameDriver {
 		root.getChildren().add(lifeCount);
 	}
 	
+	/** incrementLives adds one life and updates the lifeCount display.*/
 	private void incrementLives() {
 		root.getChildren().remove(lifeCount);
 		lives++;
@@ -282,6 +314,10 @@ public class GameDriver {
 		root.getChildren().add(lifeCount);
 	}
 	
+	/** paddleMove uses a KeyCode input to update the paddle position. Method also 
+	 * updates ball position when the ball is caught on a sticky paddle, and shoots
+	 * lazers when necessary.
+	 * @param code		User keyboard input*/
 	private void paddleMove(KeyCode code) {
 		if(code == KeyCode.RIGHT && paddle.getX() + paddle.getWidth() <= gameSurface.getWidth()) {
 			paddle.setX(paddle.getX() + KEY_INPUT_SPEED);
@@ -303,6 +339,7 @@ public class GameDriver {
 		}
 	}
 	
+	/** makeLazer creates and positions the lazer to be shot by the lazer paddle.*/
 	private Rectangle makeLazer() {
 		Rectangle newlazer = new Rectangle(paddle.getX() + .5*paddle.getWidth(), paddle.getY(), 3, 20);
 		newlazer.setFill(Color.YELLOW);
@@ -311,6 +348,10 @@ public class GameDriver {
 		return newlazer;
 	}
 	
+	/** updateLazerPosition moves the lazer by adding a factor of elapsedTime to 
+	 * its previous position. Method also checks if the lazer has reached the ceiling of the window
+	 * or hit a block and resets the position of the lazer if it has.
+	 * @param elapsedTime		time since last call to step*/
 	private void updateLazerPosition(double elapsedTime) {
 		if(lazer != null && ammo > 0) {
 			if(lazer.getY() < 0 || checkForLazerCollision()) {
@@ -318,10 +359,14 @@ public class GameDriver {
 				lazer.setY(paddle.getY() - lazer.getHeight());
 				ammo--;
 			}
-			lazer.setY(lazer.getY() - 5*DEFAULT_BALLYSPEED*elapsedTime);
+			lazer.setY(lazer.getY() - 5 * DEFAULT_BALLYSPEED * elapsedTime);
 		}
 	}
 
+	/** releaseBall is called when the ball is caught on a sticky paddle. Player can
+	 * release the ball in the northwest direction by pressing the 'Q' key and in the northeast
+	 * direction by pressing the 'E' key.
+	 * @param code		User keyboard input*/
 	private void releaseBall(KeyCode code) {
 		if(code == KeyCode.E) {
 			ballYSpeed = -1*DEFAULT_BALLYSPEED;
@@ -337,6 +382,12 @@ public class GameDriver {
 		}
 	}
 	
+	/** setLevel initializes the level scene. It initializes the game Stage and Group, sets and displays
+	 * lives, makes the paddle and ball, initializes the BlockManager, declares and initializes the game 
+	 * Scene, and deactivates power-ups.
+	 * @param myStage		level stage
+	 * @param width			width of the level scene
+	 * @param height		height of the level scene*/
 	public void setLevel(Stage myStage, double width, double height) {
 		gameStage = myStage;
 		root = new Group();
@@ -356,12 +407,14 @@ public class GameDriver {
 		myStage.show();
 	}
 	
+	/** setAndDisplayLives give five lives and displays the life count.*/
 	private void setAndDisplayLives() {
 		lives = 5;
 		lifeCount = new Text(390, 390, "Lives: " + lives);
 		root.getChildren().add(lifeCount);
 	}
 	
+	/** makePaddle makes the paddle (a Rectangle) and sets its color and initial position.*/
 	private void makePaddle() {
 		paddle = new Rectangle(65, 10);
 		setPaddleColor();
@@ -369,20 +422,25 @@ public class GameDriver {
 		root.getChildren().add(paddle);
 	}
 	
+	/**resetPaddlePosition places the paddle in its default position */
 	private void resetPaddlePosition() {
 		paddle.setX(175);
 		paddle.setY(350);
 	}
 	
+	/**resetPaddleLength sets the width of the paddle Rectangle to its default width.
+	 * It is generally called to deactivate the long paddle power-up.*/
 	private void resetPaddleLength() {
 		paddle.setWidth(65);
 	}
 	
+	/**makeBall initializes the ball as a circle.*/
 	private void makeBall() {
 		ball = new Circle(200, 300, 4);
 		root.getChildren().add(ball);
 	}
 	
+	/** resetBall places the ball at its default position and sets its speed to zero.*/
 	private void resetBall() {
 		ball.setCenterX(200);
 		ball.setCenterY(300);
@@ -390,6 +448,10 @@ public class GameDriver {
 		ballYSpeed = 0;
 	}
 	
+	/** input reads all user keyboard input. It then calls helper methods to start the ball,
+	 * move the paddle, pause the game, leave the home screen, leave the game over screen,
+	 * and activate cheat codes.
+	 * @param code		user keyboard input*/
 	private void input(KeyCode code) {
 		if(!homeScreenActive) {
 			startBall(code);
@@ -401,6 +463,9 @@ public class GameDriver {
 		cheatCodes(code);
 	}
 	
+	/** leaveGameOverScreen restarts the game at level one with the home screen displayed
+	 * upon the player pressing the space bar.
+	 * @param code		user keyboard input*/
 	private void leaveGameOverScreen(KeyCode code) {
 		if(gameOver && code == KeyCode.SPACE) {
 			stopGameLoop();
@@ -410,7 +475,13 @@ public class GameDriver {
 			startGameLoop();
 		}
 	}
-
+	
+	/** cheatCodes reads user keyboard input and activates the appropriate
+	 * cheat code. The user can press the 'enter' key to advance to the next level,
+	 * the 'D' key to deactivate an active power-up, the 'A' key to add a life, the
+	 * 'tab' key to increase the ball speed, and the 'shift' key to decrease the ball 
+	 * speed.
+	 * @param code		user keyboard input*/
 	private void cheatCodes(KeyCode code) {
 		if(code == KeyCode.ENTER && levelNum < 3) {
 			advanceLevel();
@@ -431,6 +502,9 @@ public class GameDriver {
 		}
 	}
 
+	/** startBall sets the ball into movement when the user presses the right or left arrow key at the 
+	 * beginning of a level.
+	 * @param code		user keyboard input*/
 	private void startBall(KeyCode code) {
 		if((code == KeyCode.RIGHT || code == KeyCode.LEFT) && ballXSpeed == 0 && ballYSpeed == 0) {
 			ballXSpeed = DEFAULT_BALLXSPEED;
@@ -438,6 +512,10 @@ public class GameDriver {
 		}
 	}
 	
+	/** pause pauses or unpauses the game by creating and displaying or removing the pause screen upon
+	 * the user pressing the 'P' key. Method also adjusts the 'paused' field so that the game stops and resumes
+	 * appropriately.
+	 * @param code		user keyboard input*/
 	private void pause(KeyCode code) {
 		if(code == KeyCode.P) {
 			if(!paused) {
@@ -453,6 +531,8 @@ public class GameDriver {
 		}
 	}
 	
+	/**leaveHomeScreen removes the home screen upon the player pressing the space bar.
+	 * @param code		user keyboard input */
 	private void leaveHomeScreen(KeyCode code) {
 		if(code == KeyCode.SPACE) {
 			if(homeScreenActive) {
@@ -462,6 +542,8 @@ public class GameDriver {
 		}
 	}
 	
+	/** chooseLevel, a helper method for setLevel, choosing the appropriate level and sets it.
+	 * @param levelNum		number of the level to set*/
 	private void chooseLevel(int levelNum) {
 		if(levelNum == 1) {
 			setLevelOne(root);
@@ -472,11 +554,11 @@ public class GameDriver {
 		if(levelNum == 3) {
 			setLevelThree(root);
 		}
-		if(levelNum == 4) {
-			setLevelFour(root);
-		}
 	}
 	
+	/** setLevelOne places the blocks in the appropriate locations and creates and
+	 * displays the home screen.
+	 * @param root		Group to which to add the blocks*/
 	public void setLevelOne(Group root) {
 		setBlockRow(root, 50, 0, 4, 50);
 		setBlockRow(root, 0, 30, 5, 50);
@@ -486,6 +568,7 @@ public class GameDriver {
 		initializeHomeScreen();
 	}
 	
+	/** initializeHomeScreen creates the home screen as a SplashScreen and displayes it.*/
 	private void initializeHomeScreen() {
 		homeScreenActive = true;
 		homeScreen = new SplashScreen(new Rectangle(450, 400), Color.PINK, new Text("HOME"));
@@ -497,7 +580,7 @@ public class GameDriver {
 		homeScreen.addText(15, 175, "and they are destroyed on 2nd.");
 		homeScreen.addText(5, 190, "Green blocks speed up the ball are destroyed on 1st collision.");
 		homeScreen.addText(5, 205, "Random blocks deliver one of three different powerups on collision.");
-		homeScreen.addText(5, 220, "Powerups are the paddle lengthener, sticky paddle, and lazer paddle.");
+		homeScreen.addText(5, 220, "Powerups include the long paddle, sticky paddle, and lazer paddle.");
 		homeScreen.addText(5, 235, "Release the ball from the sticky paddle using the 'Q' and 'E' keys.");
 		homeScreen.addText(5, 250, "Shoot lazers using the 'W' key.");
 		homeScreen.addText(5, 265, "Destroy five blocks in a single paddle hit and you'll earn a bonus life!");
@@ -505,24 +588,29 @@ public class GameDriver {
 		root.getChildren().addAll(homeScreen.bundle());
 	}
 	
+	/** setLevelTwo places the blocks in the appropriate locations.
+	 * @param root		Group to which to add the blocks*/
 	public void setLevelTwo(Group root) {
 		for(int x = 0; x < NUM_ROWS; x++) {
 			setBlockRow(root, 0, x*30, 5, 50);
 		}
 	}
 	
+	/** setLevelThree places the blocks in the appropriate locations.
+	 * @param root		Group to which to add the blocks*/
 	public void setLevelThree(Group root) {
 		for(int x = 0; x < NUM_ROWS; x++) {
 			setBlockRow(root, 0, x*30, 9, 0);
 		}
 	}
 	
-	public void setLevelFour(Group root) {
-		for(int x = 0; x < NUM_ROWS; x++) {
-			setBlockRow(root, 0, x*30, 9, 0);
-		}
-	}
-	
+	/** setBlockRow creates and places the blocks in a single row. It uses the mod operation to determine the type
+	 * of block being places in a given location. The method updates the BlockManager accordingly.
+	 * @param root					Group to which to add the blocks
+	 * @param blockXCoordinate		x coordinate at which to place the first block
+	 * @param blockYCoordinate		y coordinate at which to place all blocks in the row
+	 * @param blockNum				number of blocks to place in the row
+	 * @param gap					amount of horizontal space to leave between consecutively placed blocks*/
 	private void setBlockRow(Group root, int blockXCoordinate, int blockYCoordinate, int blockNum, int gap) {
 		for(int x = 0; x < blockNum; x++) {
 			Rectangle block = new Rectangle(Block.WIDTH, Block.HEIGHT, Color.GRAY);
@@ -545,7 +633,7 @@ public class GameDriver {
 				BLOCK = new Block(block, "One Hit");
 			}
 			blockManager.addBlock(BLOCK);
-			blockXCoordinate += gap+50;
+			blockXCoordinate += gap+Block.WIDTH;
 		}
 	}
 
