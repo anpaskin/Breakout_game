@@ -152,7 +152,10 @@ public class GameDriver {
 		}
 		stickyPaddle = false;
 		ammo = 0;
-		if(lazer != null) lazer.setFill(Color.TRANSPARENT);
+		if(lazer != null) {
+			lazer.setFill(Color.TRANSPARENT);
+			lazer = null;
+		}
 		paddle.setFill(Color.GREEN);
 	}
 
@@ -563,7 +566,7 @@ public class GameDriver {
 		initializeHomeScreen();
 	}
 	
-	/** initializeHomeScreen creates the home screen as a SplashScreen and displayes it.*/
+	/** initializeHomeScreen creates the home screen as a SplashScreen and displays it.*/
 	private void initializeHomeScreen() {
 		homeScreenActive = true;
 		homeScreen = new SplashScreen(new Rectangle(450, 400), Color.PINK, new Text("HOME"));
@@ -576,10 +579,12 @@ public class GameDriver {
 		homeScreen.addText(5, 190, "Green blocks speed up the ball are destroyed on 1st collision.");
 		homeScreen.addText(5, 205, "Random blocks deliver one of three different powerups on collision.");
 		homeScreen.addText(5, 220, "Powerups include the long paddle, sticky paddle, and lazer paddle.");
-		homeScreen.addText(5, 235, "Release the ball from the sticky paddle using the 'Q' and 'E' keys.");
-		homeScreen.addText(5, 250, "Shoot lazers using the 'W' key.");
-		homeScreen.addText(5, 265, "Destroy five blocks in a single paddle hit and you'll earn a bonus life!");
-		homeScreen.addText(5, 280, "Press space to go to Level 1, then press the right arrow key to start!");
+		homeScreen.addText(5, 235, "The sticky paddle is purple and the lazer paddle is dark blue.");
+		homeScreen.addText(5, 250, "Release the ball from the sticky paddle using the 'Q' and 'E' keys.");
+		homeScreen.addText(5, 265, "Shoot lazers using the 'W' key.");
+		homeScreen.addText(5, 280, "Destroy five blocks in a single paddle hit and you'll earn a bonus life!");
+		homeScreen.addText(5, 295, "Press 'P' at any point to pause the game.");
+		homeScreen.addText(5, 310, "Press space to go to Level 1, then press the right arrow key to start!");
 		root.getChildren().addAll(homeScreen.bundle());
 	}
 	

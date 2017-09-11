@@ -6,7 +6,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 
-/** BlockManager manages the statuses and positions of the blocks in a given level. It uses
+/** GameDriver uses BlockManager to manage the statuses and positions of the blocks in a given level. It uses
  BLOCK_LIST to keep track of all existing blocks, COLLISIONS to keep track of all hit blocks
  in a given step, and CLEAN_UP_BLOCKS to keep track of the blocks that are destroyed in a given step.
  It also gets a ball from the GameDriver (or whatever initializes the BlockManager).

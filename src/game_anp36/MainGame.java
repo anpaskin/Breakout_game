@@ -3,7 +3,8 @@ package game_anp36;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
-/**
+/** MainGame starts the game by initializing a new GameDriver and calling its
+ * setLevel and startGameLoop methods.
  * 
  * @author Aaron Paskin
  *
