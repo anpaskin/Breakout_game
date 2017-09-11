@@ -274,14 +274,12 @@ public class GameDriver {
 	/** ceilingAndWallBounce checks for ball-ceiling and ball-wall collisions
 	 * and updates the ball speed accordingly.*/
 	private void ceilingAndWallBounce() {
-		if(ball.getCenterY() - ball.getRadius() < 0) {
+		if(ball.getCenterY() - ball.getRadius() <= 0) {
 			ballYSpeed *= -1;
-			return;
 		}
 		if(ball.getCenterX() - ball.getRadius() <= 0 ||
 				ball.getCenterX() + ball.getRadius() >= gameSurface.getWidth()) {
 			ballXSpeed *= -1;
-			return;
 		}
 	}
 	
@@ -477,8 +475,8 @@ public class GameDriver {
 	/** cheatCodes reads user keyboard input and activates the appropriate
 	 * cheat code. The user can press the 'enter' key to advance to the next level,
 	 * the 'D' key to deactivate an active power-up, the 'A' key to add a life, the
-	 * 'tab' key to increase the ball speed, and the 'shift' key to decrease the ball 
-	 * speed.
+	 * 'tab' key to increase the ball speed, the 'shift' key to decrease the ball 
+	 * speed, and the 'R' key to reset the ball and paddle positions.
 	 * @param code		user keyboard input*/
 	private void cheatCodes(KeyCode code) {
 		if(code == KeyCode.ENTER && levelNum < 3) {
@@ -497,6 +495,10 @@ public class GameDriver {
 		if(code == KeyCode.SHIFT) {
 			ballXSpeed /= 1.5;
 			ballYSpeed /= 1.5;
+		}
+		if(code == KeyCode.R) {
+			resetBall();
+			resetPaddlePosition();
 		}
 	}
 

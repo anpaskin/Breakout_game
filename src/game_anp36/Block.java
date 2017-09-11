@@ -15,6 +15,8 @@ import javafx.scene.shape.Rectangle;
 public class Block {
 
 	private Rectangle BLOCK;
+	private double originalX;
+	private double originalY;
 	private boolean isDestroyed;
 	private boolean lazerCollision;
 	private int collisions;
@@ -25,6 +27,8 @@ public class Block {
 	
 	public Block(Rectangle block) {
 		BLOCK = block;
+		originalX = block.getX();
+		originalY = block.getY();
 		lazerCollision = false;
 		collisions = 0;
 		type = "One Hit";
@@ -129,8 +133,8 @@ public class Block {
 		double r = ball.getRadius();
 		double cX = ball.getCenterX();
 		double cY = ball.getCenterY();
-		double bX = BLOCK.getX();
-		double bY = BLOCK.getY();
+		double bX = originalX;
+		double bY = originalY;
 		double w = BLOCK.getWidth();
 		double h = BLOCK.getHeight();
 		if(
