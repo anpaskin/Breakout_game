@@ -1,16 +1,15 @@
 package game_anp36;
 
-import java.util.ArrayList;
 import java.util.Random;
-
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 
 /**
+ * The Block class makes it easy to add blocks to levels during level setup, handle their collisions in the 
+ * BlockManager class, and remove them from the game in the GameDriver class.
  * 
  * @author Aaron Paskin
- *
  */
 public class Block {
 
@@ -155,5 +154,4 @@ public class Block {
 		}
 		else return "x and y";
 	}
-	
 }

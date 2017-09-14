@@ -44,7 +44,7 @@ public class SplashScreen {
 	
 	/** bundle makes a list of all Nodes in the SplashScreen
 	 * so that they may be added to the Group in GameDriver.
-	 * @return		Returns and ArrayList of all the Nodes in the
+	 * @return		Returns an ArrayList of all the Nodes in the
 	 * 				SplashScreen.*/
 	public ArrayList<Node> bundle() {
 		ArrayList<Node> bundle = new ArrayList<Node>();

@@ -203,8 +203,8 @@ public class GameDriver {
 			}
 			ballYSpeed *= -1;
 			if(ball.getCenterX() > (paddle.getX() + (.75*paddle.getWidth()))) {
-				ballXSpeed *= 1.2;
-				ballYSpeed *= 1.2;
+				ballXSpeed *= 1.1;
+				ballYSpeed *= 1.1;
 				ballXSpeed = Math.abs(ballXSpeed);
 				return true;
 			}
