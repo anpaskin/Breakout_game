@@ -1,14 +1,12 @@
-game
+Breakout Game
 ====
-
-First project for CompSci 308 Fall 2017
 
 This game was created by Aaron Paskin and is loosely based on the design plan outlined by Carl Dea
 in his javafx tutorial blog (https://carlfx.wordpress.com/2012/03/29/javafx-2-gametutorial-part-1/).
 The game was started on August 29th, 2017 and completed on September 10th, 2017. It took approximately
 40 hours to complete.
 
-Open the game by running MainGame.java. MainGame.java uses the classes GameDriver.java, BlockManager.java,
+Open the game by running MainGame.java in src/game_anp36. MainGame.java uses the classes GameDriver.java, BlockManager.java,
 SlashScreen.java, and Block.java.
 
 Refer to the instructions on the home screen (displayed when first opening the game) for game play. Cheat codes 
